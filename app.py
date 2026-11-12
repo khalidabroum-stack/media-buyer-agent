@@ -18,19 +18,31 @@ with tab1:
         else:
             df = pd.read_excel(uploaded)
         
+        # إلا كان الفايل خاوي - ديال 39 ميتريك ديالك
+        if len(df) == 0 or "No data available" in str(df.values):
+            st.error("🚨 الفايل خاوي! سير لـ Ads Manager و حيد الفلتر ديال التاريخ، دير Last 30 days ولا Lifetime، و عاود Export")
+            st.stop()
+
         def find_col(possibles):
             for c in df.columns:
                 for p in possibles:
                     if p.lower() in c.lower():
                         return c
             return None
+
         col_campaign = find_col(["campaign name"])
         col_spend = find_col(["amount spent"])
         col_impr = find_col(["impressions"])
         col_click_link = find_col(["link clicks"])
         col_click_all = find_col(["clicks (all)"])
         col_landing = find_col(["landing page views"])
-        col_leads = find_col(["leads", "results", "purchases"])
+        col_outbound = find_col(["outbound clicks"])
+        col_leads = find_col(["leads"])
+        col_purchases = find_col(["purchases"])
+        col_purchase_value = find_col(["purchase value", "conversion value"])
+        col_atc = find_col(["adds to cart", "add to cart"])
+        col_checkout = find_col(["checkouts initiated", "initiated checkouts"])
+        col_results = find_col(["results"])
 
         def get(row, col, default=0):
             try:
@@ -50,13 +62,51 @@ with tab1:
         clicks_link = get(row, col_click_link)
         clicks_all = get(row, col_click_all)
         landing = get(row, col_landing)
-        leads = get(row, col_leads)
+        outbound = get(row, col_outbound)
+        leads = get(row, col_leads) if col_leads else get(row, col_results)
+        purchases = get(row, col_purchases)
+        purchase_value = get(row, col_purchase_value)
+        atc = get(row, col_atc)
+        checkout = get(row, col_checkout)
+
+        # ===== حساب الـ 39 ميتريك كاملين =====
         cpl = (spend/leads) if leads>0 else 999
+        cpa = (spend/purchases) if purchases>0 else 0
+        aov = (purchase_value/purchases) if purchases>0 else 0
+        roas = (purchase_value/spend) if spend>0 else 0
         lead_rate = (leads/landing*100) if landing>0 else 0
         landing_rate = (landing/clicks_link*100) if clicks_link>0 else 0
+        page_speed = (landing/outbound*100) if outbound>0 else landing_rate
         ctr_link = (clicks_link/impressions*100) if impressions>0 else 0
         cpc = (spend/clicks_link) if clicks_link>0 else 0
         cpm = (spend/impressions*1000) if impressions>0 else 0
+        atc_rate = (atc/landing*100) if landing>0 else 0
+        checkout_rate = (checkout/atc*100) if atc>0 else 0
+        purchase_rate = (purchases/landing*100) if landing>0 else 0
+
+        # عرض الميتريكس الجداد
+        st.subheader("📊 الـ 39 ميتريك - الملخص")
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("AOV", f"{aov:.0f} DH")
+        m2.metric("CPA", f"{cpa:.0f} DH")
+        m3.metric("ROAS", f"{roas:.2f}x")
+        m4.metric("Page Speed", f"{page_speed:.0f}%")
+        m1.metric("ATC Rate", f"{atc_rate:.1f}%")
+        m2.metric("Checkout Rate", f"{checkout_rate:.1f}%")
+        m3.metric("Purchase Rate", f"{purchase_rate:.1f}%")
+        m4.metric("Lead Rate", f"{lead_rate:.1f}%")
+
+        # تشخيص AOV
+        if purchases>0:
+            if aov < cpa:
+                st.error(f"🚨 كتخسر! AOV {aov:.0f} DH أصغر من CPA {cpa:.0f} DH - زيد Bundle ولا Free Shipping من 400 DH")
+            elif aov < cpa*2:
+                st.warning(f"⚠️ ربح قليل - AOV {aov:.0f} DH قريب لـ CPA {cpa:.0f} DH - زيد عرض 1+1")
+            else:
+                st.success(f"✅ AOV مزيان - {aov:.0f} DH أكبر من CPA {cpa:.0f} DH")
+
+        if page_speed < 80 and page_speed>0:
+            st.error(f"🚨 الصفحة ثقيلة - غير {page_speed:.0f}% وصلو للستور. خفف التصاور.")
 
         st.write("**الفيديو - من Ad بوحدو (ما كاينش فالـ Export)**")
         c1, c2 = st.columns(2)
@@ -130,13 +180,12 @@ with tab1:
                 st.write("**علاش؟** الصفحة ما فيهاش ثقة. **شنو تدير؟** الثمن واضح الفوق؟ Reviews كيبانو؟ عرض: توصيل فابور؟ زر 'اطلب الان' كبير؟")
 
             st.divider()
-            st.write(f"📉 Funnel: Impressions {impressions:.0f} -> 3s {views_3s} ({hook:.0f}%) -> Link Clicks {clicks_link:.0f} -> Landing {landing:.0f} ({landing_rate:.0f}%) -> Leads {leads:.0f} ({lead_rate:.1f}%) | CPL {cpl:.1f} | CPM {cpm:.1f} | CPC {cpc:.2f}")
+            st.write(f"📉 Funnel: Impressions {impressions:.0f} -> 3s {views_3s} ({hook:.0f}%) -> Link Clicks {clicks_link:.0f} -> Landing {landing:.0f} ({landing_rate:.0f}%) -> Leads {leads:.0f} ({lead_rate:.1f}%) | CPL {cpl:.1f} | CPM {cpm:.1f} | CPC {cpc:.2f} | AOV {aov:.0f} | ROAS {roas:.2f}x")
 
 # ================= TAB 2 - تحليل الفيديو + الكوبي =================
 with tab2:
     st.subheader("🎬 حط ليا الفيديو و Ad Copy ديالك - نقول ليك فين الخلل")
     st.write("هادي بلاصة بوحدها ديال الفيديو. هنا كنحلو الفيديو بالتفصيل.")
-
     product = st.text_input("شنو المنتج؟", placeholder="مثال: كريم تبييض، ساعة، مكينة قهوة...")
     problem_product = st.text_input("شنو المشكل اللي كيحل المنتج؟", placeholder="مثال: البشرة كحلة، النعاس قليل...")
     audience = st.selectbox("شكون الجمهور؟", ["نساء 18-35", "نساء 35-55", "رجال 18-35", "رجال 35-55", "الأمهات", "الشباب"])
@@ -147,64 +196,47 @@ with tab2:
     ad_copy = st.text_area("Ad Copy - شنو كتبتي فالنص ديال الإعلان ففيسبوك؟", placeholder="كتب النص كامل هنا...")
     has_price = st.selectbox("واش الثمن كاين فالفيديو؟", ["لا", "إيه فاللخر", "إيه فاللول"])
     has_offer = st.selectbox("واش كاين عرض؟ (توصيل فابور، تخفيض...)", ["لا، ما كاينش عرض", "إيه، توصيل فابور", "إيه، تخفيض", "إيه، 1+1 فابور"])
-
     video_file = st.file_uploader("📹 Upload الفيديو ديالك هنا (إلا بغيتي)", type=["mp4", "mov"], key="vid")
     if video_file:
         st.video(video_file)
-
     if st.button("🤖 حلل ليا الفيديو + الكوبي - فين الخلل؟", type="primary", key="ana2"):
         st.divider()
         st.subheader("🔍 تحليل الفيديو - فين الخلل؟")
-        
-        # Hook Analysis
         if "سلام" in hook_text or "اليوم جبت" in hook_text or len(hook_text) < 10:
             st.error("🔴 الخلل فالـ HOOK - أول 3 ثواني ميتين!")
             st.write(f"**قلتي:** '{hook_text}' - هادا Hook ديال يوتيوب، ماشي ديال فيسبوك. الناس غادي يدوزو.")
             st.write("**الحل:** بدل Hook. جرب واحد من هادو:")
         else:
             st.success("✅ Hook مزيان، ما فيهش مشكل كبير.")
-
         st.write("**🎬 السكريبت الجديد اللي خاصك تدير (30 ثانية):**")
         st.write(f"**0-3s HOOK:** 'كتعاني من {problem_product}؟ شوف هادي...' + وري المشكل فالكاميرا")
         st.write(f"**3-10s المشكل:** 'جربتي بزاف و والو؟ حيت المشكل هو...' + وري قبل / بعد")
         st.write(f"**10-20s الحل:** 'هاد {product} كيحلها ف 7 أيام، حيت...' + وري المنتج كيخدم، وري النتيجة")
         st.write(f"**20-25s الثقة:** 'أكثر من 500 واحد جربوه، شوفو شنو قالو...' + وري Reviews")
         st.write(f"**25-30s CTA:** 'كليكي على اللين دابا، العرض كيسالي اليوم، التوصيل فابور' + الثمن واضح")
-
         st.divider()
         st.subheader("🎥 نوع الفيديو + Avatar + الصوت - شنو اللي خدام فالمغرب؟")
-        st.write(f"**نوع الفيديو اللي خاصك:**")
         if audience in ["نساء 18-35", "الأمهات"]:
-            st.write("✅ **UGC - بنت كتهضر بالدارجة** - هي اللي خدامة مزيان فالمغرب دابا. ماشي Voice Over روبو، بنت حقيقية كتهضر بحال كتهضر مع صاحبتها.")
-            st.write("**Avatar:** بنت مغربية 25-30 سنة، لابسة عادي، كتهضر فالدار، إضاءة طبيعية، تيليفون فاليد.")
-            st.write("**الصوت:** صوت بنت بالدارجة، هادي و طبيعي، ماشي صوت إشهار. سرعة متوسطة، ما تجريش.")
+            st.write("✅ **UGC - بنت كتهضر بالدارجة** - هي اللي خدامة مزيان فالمغرب دابا.")
+            st.write("**Avatar:** بنت مغربية 25-30 سنة، لابسة عادي، كتهضر فالدار، إضاءة طبيعية.")
+            st.write("**الصوت:** صوت بنت بالدارجة، هادي و طبيعي، ماشي صوت إشهار.")
         elif "رجال" in audience:
             st.write("✅ **UGC - راجل كيجرب المنتج** - راجل كيهضر بالدارجة، كيوري المنتج فاليد.")
-            st.write("**Avatar:** راجل 28-35 سنة، كيهضر بثقة، لابس عادي.")
-            st.write("**الصوت:** صوت راجل بالدارجة، قوي شوية، ما يكونش ممل.")
         else:
             st.write("✅ **UGC + Before / After** - وري قبل و بعد، هادي هي اللي كتبيع.")
-        
-        st.write("**الموسيقى:** موسيقى خفيفة فالخلف، ما تغطيش على الصوت. بلا موسيقى إلا كان UGC.")
         st.write("**الكتابة فالفيديو:** كل كلمة مهمة كتبها فالفيديو، حيت 80% كيتفرجو بلا صوت. دير Subtitles بالدارجة.")
-        st.write(f"**طول الفيديو:** {video_length} ثانية - ", end="")
         if video_length > 40:
             st.write("طويل بزاف! قصرو لـ 25-30 ثانية.")
         else:
             st.write("مزيان، خليه 25-30 ثانية.")
-
         st.divider()
         st.subheader("✍️ تحليل Ad Copy - النص ديال الإعلان")
         if len(ad_copy) < 50:
             st.error("🔴 Ad Copy قصير بزاف ولا ما كاينش!")
-            st.write("**علاش؟** فيسبوك كيعطي النص أهمية كبيرة. إلا كان قصير، الناس ما غاديش يثيقو.")
         if has_price == "لا":
             st.error("🔴 الخلل: الثمن ما كاينش فالفيديو!")
-            st.write("**علاش؟** الناس كيكليكيو و كيتفاجئو بالثمن فالصفحة و كيهربو. **الحل:** قول الثمن فالفيديو ف 20s.")
         if has_offer == "لا، ما كاينش عرض":
             st.warning("🟠 ما كاينش عرض! زيد عرض باش الناس يكليكيو دابا.")
-            st.write("**أحسن العروض فالمغرب:** توصيل فابور / 1+1 فابور / تخفيض 20% اليوم فقط.")
-
         st.write("**✍️ Ad Copy الجديد اللي خاصك تكتب (كوبيه نيشان):**")
         st.code(f"""كتعاني من {problem_product}؟ 😩
 
@@ -219,40 +251,31 @@ with tab2:
 👉 كليكي على اللين دابا و طلبي، العرض كيسالي اليوم!
 
 # {product}""", language="text")
-        st.write("**علاش هاد الكوبي خدام؟** 1) بدا بالمشكل 2) عطا الحل 3) عطا الثقة (500 بنت) 4) عطا عرض (توصيل فابور) 5) CTA واضح (كليكي دابا)")
 
 # ================= TAB 3 - بناء حملة Expert =================
 with tab3:
     st.subheader("🚀 كيفاش تبني حملة بحال Expert - من الزيرو")
-    st.write("هادي هي الطريقة اللي كيخدمو بيها الـ Experts فالمغرب، خطوة بخطوة:")
-
     st.write("**المرحلة 1: قبل ما تطلق (1 نهار)**")
-    st.write("1. **المنتج:** واش كيحل مشكل حقيقي؟ واش الثمن ديالو بين 150-350 درهم؟ إلا كان أقل من 100، ما غاديش تربح مع التوصيل. إلا كان كثر من 400، الناس غادي يترددو.")
-    st.write("2. **الفيديو:** 3 فيديوهات مختلفين: 1) UGC بنت كتهضر 2) Before / After 3) Voice Over + تصاور. ما تطلقش بفيديو واحد.")
-    st.write("3. **الصفحة:** الثمن واضح الفوق، Reviews، زر 'اطلب الان' كبير، سرعة أقل من 2s. جربها فتيليفونك نتا اللول.")
-    
+    st.write("1. **المنتج:** واش كيحل مشكل حقيقي؟ واش الثمن ديالو بين 150-350 درهم؟")
+    st.write("2. **الفيديو:** 3 فيديوهات مختلفين: 1) UGC بنت كتهضر 2) Before / After 3) Voice Over + تصاور.")
+    st.write("3. **الصفحة:** الثمن واضح الفوق، Reviews، زر 'اطلب الان' كبير، سرعة أقل من 2s.")
     st.write("**المرحلة 2: الإطلاق (نهار 1-3)**")
-    st.write("1. **Campaign Objective:** Sales ولا Leads - ماشي Traffic ولا Engagement!")
-    st.write("2. **Budget:** 200 درهم فالنهار، CBO - خلي فيسبوك يوزع البودجيت.")
-    st.write("3. **Audience:** Broad - المغرب كامل، 18-55، بلا اهتمامات. فيسبوك دابا كيعرف حسن منك شكون غادي يشري.")
-    st.write("4. **Ad Sets:** 1 Ad Set فيه 3 فيديوهات. ما تديرش 5 Ad Sets فالبداية.")
-    st.write("5. **ما تقيسش والو فأول 3 أيام!** خلي فيسبوك يتعلم. ما تبدلش البودجيت ولا الفيديو.")
-
+    st.write("1. **Campaign Objective:** Sales ولا Leads - ماشي Traffic!")
+    st.write("2. **Budget:** 200 درهم فالنهار، CBO.")
+    st.write("3. **Audience:** Broad - المغرب كامل، 18-55، بلا اهتمامات.")
+    st.write("4. **Ad Sets:** 1 Ad Set فيه 3 فيديوهات.")
+    st.write("5. **ما تقيسش والو فأول 3 أيام!**")
     st.write("**المرحلة 3: التحليل (نهار 3)**")
     st.write("1. سير لـ Tab 1، Upload الـ Export، شوف القرار: SCALE ولا FIX ولا KILL")
-    st.write("2. شوف الفيديو اللي جاب أقل CPL، حيد لاخرين، و زيد فيديو جديد بحالو.")
-    st.write("3. إلا CPL مزيان، سكيلي +20% كل يومين.")
-
+    st.write("2. شوف الفيديو اللي جاب أقل CPL، حيد لاخرين.")
     st.write("**المرحلة 4: السكيلينغ (نهار 5+) - شحال نزيد؟**")
-    st.write("**الطريقة الآمنة (Vertical Scaling):** زيد البودجيت 20% كل يومين. من 200 -> 240 -> 288 -> 345...")
-    st.write("**الطريقة السريعة (Horizontal Scaling):** إلا كان CPL مزيان بزاف، دوبلي الحملة كاملة: دير Duplicate للحملة و زيد بودجيت جديد. ما تزيدش البودجيت فالحملة القديمة بزاف.")
-    st.write("**إمتى نحبس؟** إلا CPL طلع 50% فوق الهدف ديالك لمدة 2 أيام، حبس السكيلينغ و رجع للبودجيت القديم.")
-    st.write("**إمتى نقتل الحملة؟** إلا صرفتي 3x CPL ديالك و ما جابتيش حتى Lead، حبسها. مثال: إلا CPL ديالك 20 درهم و صرفتي 60 درهم و 0 Leads، حبسها.")
-
+    st.write("**الطريقة الآمنة:** زيد البودجيت 20% كل يومين. من 200 -> 240 -> 288 -> 345...")
+    st.write("**الطريقة السريعة:** دوبلي الحملة كاملة: دير Duplicate للحملة.")
+    st.write("**إمتى نحبس؟** إلا CPL طلع 50% فوق الهدف لمدة 2 أيام.")
     st.write("**❌ الأخطاء اللي كيقتلو الحملة:**")
     st.write("- كتبدل البودجيت كل ساعة - فيسبوك كيتلف")
     st.write("- كتطلق بفيديو واحد - خاصك 3 على الأقل")
-    st.write("- كتحكم على الحملة فأول نهار - خاصك 3 أيام على الأقل")
-    st.write("- كتزيد البودجيت 100% دقة وحدة - فيسبوك كيخربق")
+    st.write("- كتحكم على الحملة فأول نهار - خاصك 3 أيام")
+    st.write("- كتزيد البودجيت 100% دقة وحدة")
     st.write("- كتدير Audience ضيق بزاف - خليها Broad")
-    
+
