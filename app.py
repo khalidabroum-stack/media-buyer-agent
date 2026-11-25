@@ -370,16 +370,14 @@ with tab4:
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
             st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين.")
 
-# ================= TAB 5 - JADID: حط التصاور كاملين في دقة وحدة + تحليل اللين =================
+# ================= TAB 5 =================
 with tab5:
     st.subheader("🌐 حط التصاور ديال Landing Page كاملين - نحكم عليهم كاملين في دقة وحدة")
     st.write("حط 5 ولا 6 ولا 7 تصاور - ديال الصفحة كاملة من الفوق حتى لتحت - و غادي نقيسهم و نقول ليك فين غلطتي في كل تصويرة. زائد اللين ديال الستور باش نشوف السرعة و الترتيب.")
-
     url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا (اختياري)", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url_new")
     st.write("### ❓ غير هاد الجوج اللي ما نقدرش نشوفهم من برا")
     q_upsell_n = st.selectbox("1. واش داير Upsell؟ (ملي كيعمر الفورم، كيبان ليه زيد واحد آخر بنص الثمن؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_upsell_new")
     q_cross_n = st.selectbox("2. واش داير Cross-sell؟ (منتج آخر معاه؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_cross_new")
-
     st.write("### 📸 حط التصاور كاملين هنا - في دقة وحدة")
     st.write("كليكي على الزر و ختار التصاور كاملين: التصويرة اللولة، التانية، التالتة... كاملين")
     lp_imgs = st.file_uploader(
@@ -388,15 +386,12 @@ with tab5:
         accept_multiple_files=True,
         key="lp_imgs_all"
     )
-
-    # --- PART 1: تحليل التصاور كاملين ---
     if lp_imgs:
         st.success(f"✅ واخا، وصلوني {len(lp_imgs)} تصاور. هاهوما كاملين:")
         cols = st.columns(3)
         for i, f in enumerate(lp_imgs):
             with cols[i % 3]:
                 st.image(f, caption=f"تصويرة {i+1} - {f.name}", use_container_width=True)
-
         if st.button("🤖 حكم على التصاور كاملين دابا", type="primary", key="btn_imgs_all"):
             from PIL import Image
             import io
@@ -502,8 +497,6 @@ with tab5:
                 st.success("✅ Upsell + Cross-sell دايرهم، مزيان.")
             else:
                 st.error("🚨 **ما دايرش Upsell / Cross-sell:** كتخلي الفلوس في الطابلة. زيد بعد الفورم: 'زيد واحد آخر بنص الثمن؟'")
-
-    # --- PART 2: تحليل اللين - السرعة + الترتيب + الفورم + الألوان (القديم ديالك، ما بدلتوش) ---
     if st.button("🤖 دخل شوف الستور من اللين و قيمو ليا", type="primary", key="btn_lp_new"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
@@ -561,8 +554,17 @@ with tab5:
             has_reviews = pos_reviews < 999999999
             has_video = pos_video < 999999999
             has_bundle = any(x in html_low for x in ["1+1", "2+1", "bundle", "pack"])
-            colors_found = re.findall(r'#(?:[0-9a-fA-F]{3}){1,2}\b', html)
-            colors_unique = list(set([c.lower() for c in colors_found if c.lower() not in ["#fff", "#ffffff", "#000", "#000000", "#f5f5f5", "#eeeeee"]]))
+            # ===== 🎨 الألوان - مصحح: ما كنحسبوش ألوان التصاور =====
+            # الغلط القديم: كان كيحسب كاع الألوان في HTML، و كيقول 25 لون = مخربق
+            # الصحيح: اللاندينغ ديالك كاملة تصاور، يعني الألوان اللي كيشوف الكليان هما ديال التصاور
+            # داكشي علاش نحسبو غير ألوان الزر و الفورم، و إلا كانت لاندينغ تصاور ما نعاقبوش عليها
+            total_text_len = len(html_low.strip())
+            is_image_landing = (nb_img >= 4 and total_text_len < 50000) or nb_img > 8
+            buttons_html = re.findall(r'<button.*?</button>', html_low, flags=re.DOTALL)
+            forms_html = re.findall(r'<form.*?</form>', html_low, flags=re.DOTALL)
+            cta_html = " ".join(buttons_html + forms_html)
+            colors_found = re.findall(r'#(?:[0-9a-fA-F]{3}){1,2}\b', cta_html)
+            colors_unique = list(set([c.lower() for c in colors_found if c.lower() not in ["#fff", "#ffffff", "#000", "#000000", "#f5f5f5", "#eeeeee", "#ddd", "#dddddd"]]))
             nb_colors = len(colors_unique)
             score = 0
             problems = []
@@ -647,17 +649,31 @@ with tab5:
             else:
                 problems.append("🚨 **ما لقيتش فورم:** كيفاش غادي يشري؟")
                 solutions.append("زيد فورم قصير الفوق + واتساب.")
-            details.append(f"🎨 **الألوان:** لقيت {nb_colors} لون: {', '.join(colors_unique[:5]) if colors_unique else 'غير أبيض و أسود'}")
-            if nb_colors <= 2:
-                score += 1
-                details.append("✅ الألوان متناسقين.")
-            elif nb_colors <= 4:
-                score += 0.5
-                problems.append(f"🟠 **الألوان بزاف شوية:** {nb_colors} ألوان.")
-                solutions.append("خلي لون واحد + أبيض. حيد الألوان الزايدين.")
+            # ===== التقييم ديال الألوان - مصحح =====
+            details.append(f"🎨 **ألوان الزر و الفورم فقط:** لقيت {nb_colors} لون: {', '.join(colors_unique[:5]) if colors_unique else 'غير أبيض و أسود'}")
+            if is_image_landing:
+                details.append(f"✅ هادي لاندينغ تصاور ({nb_img} تصاور) - تجاهلنا ألوان التصاور، حسبنا غير ألوان الزر و الفورم")
+                if nb_colors <= 3:
+                    score += 1
+                    details.append("✅ ألوان الزر و الفورم متناسقين.")
+                elif nb_colors <= 5:
+                    score += 0.5
+                    problems.append(f"🟠 **ألوان الزر و الفورم شوية بزاف:** {nb_colors} ألوان.")
+                    solutions.append("خلي الزر و الفورم بلون واحد + أبيض. ما تبدلش التصاور.")
+                else:
+                    problems.append(f"🟠 **ألوان الزر و الفورم مخربقين:** {nb_colors} لون! غير الزر و الفورم، ماشي التصاور.")
+                    solutions.append("الزر كامل بنفس اللون، و الفورم أبيض. التصاور خليهم كيفما هما.")
             else:
-                problems.append(f"🚨 **الألوان مخربقين:** {nb_colors} لون! الستور كيبان رخيص.")
-                solutions.append("الستور اللي كيبيع: أبيض + لون واحد. الزر يكون لون واحد.")
+                if nb_colors <= 2:
+                    score += 1
+                    details.append("✅ الألوان متناسقين.")
+                elif nb_colors <= 4:
+                    score += 0.5
+                    problems.append(f"🟠 **الألوان بزاف شوية:** {nb_colors} ألوان.")
+                    solutions.append("خلي لون واحد + أبيض. حيد الألوان الزايدين.")
+                else:
+                    problems.append(f"🚨 **الألوان مخربقين:** {nb_colors} لون! الستور كيبان رخيص.")
+                    solutions.append("الستور اللي كيبيع: أبيض + لون واحد. الزر يكون لون واحد.")
             if has_cod:
                 score += 0.25
                 details.append("💵 الدفع عند التوصيل: ✅ كاين.")
