@@ -8,11 +8,10 @@ st.write("الحملة + الفيديو + الكوبي + السكيلينغ - ك
 
 tab0, tab1, tab2, tab4, tab5 = st.tabs(["🟢 0. ابدا هنا - واش أول مرة؟", "📊 1. تحليل الحملة - SCALE or KILL", "🎬 2. تحليل الفيديو + Ad Copy", "🩺 4. محلل COD - CPL / CONF / DELIV", "🌐 5. محلل Landing Page - واش غادي يبيع؟"])
 
-# ================= TAB 0 - جديد: ابدا هنا - Media Buyer + Marketer + Copywriter =================
+# ================= TAB 0 =================
 with tab0:
     st.subheader("🟢 قبل ما تطلق أي حملة - جاوب هنا و نعطيك استراتيجية كاملة")
     st.write("هادا هو الـ Media Buyer ديالك. جاوب بالصح، و غادي نعطيك شنو تدير من Campaign حتى لـ Ads، و شحال غادي يجيك CPL، و امتى تطفي.")
-
     c1, c2 = st.columns(2)
     with c1:
         first_time = st.selectbox("1. واش أول مرة تحل Ad Account؟", ["إيه، أول مرة", "لا، عندي واحد قديم و خدام", "لا، عندي واحد و لكن تبانا / تقيد"], key="t0_first")
@@ -26,7 +25,6 @@ with tab0:
         target0 = st.selectbox("8. شكون Target ديالك؟", ["نساء 35-65", "رجال 35-65", "نساء 18-35", "رجال 18-35", "الأمهات", "رجال + نساء 35-65", "ما عرفتش"], key="t0_target")
         page0 = st.selectbox("9. واش الصفحة واجدة ولا جديدة؟", ["جديدة - 0 متابع", "قديمة و فيها تفاعل", "قديمة و لكن ميتة"], key="t0_page")
         ville0 = st.selectbox("10. فين غادي تبيع؟", ["المغرب كامل", "كازا + الرباط + طنجة فقط", "مدينة وحدة"], key="t0_ville")
-
     if st.button("🤖 عطيني الاستراتيجية ديالي كاملة", type="primary", key="btn_t0"):
         marge0 = prix_vente0 - prix_cout0
         if prix_vente0 <= 180:
@@ -35,21 +33,17 @@ with tab0:
             cpl_min, cpl_max, cpl_bad = 12, 22, 45
         else:
             cpl_min, cpl_max, cpl_bad = 18, 32, 55
-
         st.divider()
         st.subheader(f"📋 استراتيجية {produit0 if produit0 else 'المنتج ديالك'} - من Campaign حتى Ads")
-
         if first_time == "إيه، أول مرة":
-            st.warning("⚠️ **أول مرة؟** ما تطلقش بـ Budget كبير. أول 3 أيام هي Warm-up. دير صفحة، دير 3 بوستات عاديين، و عاد أطلق بـ 150-200 DH/نهار. ما تديرش Pixel جديد و تسنا المبيعات في نفس النهار.")
+            st.warning("⚠️ **أول مرة؟** ما تطلقش بـ Budget كبير. أول 3 أيام هي Warm-up. دير صفحة، دير 3 بوستات عاديين، و عاد أطلق بـ 150-200 DH/نهار.")
             st.write("**Checklist أول مرة:** 1) صفحة فيها تصويرة + غلاف + 3 بوستات 2) حساب إعلاني مربوط بالصفحة 3) طريقة خلاص خدامة 4) WhatsApp Business مربوط")
         elif first_time == "لا، عندي واحد و لكن تبانا / تقيد":
             st.error("🚨 **الحساب تبانا؟** ما تطلقش فيه نفس المنتج بنفس الفيديو. بدل الفيديو، بدل الصفحة، و سخن الحساب الجديد بـ 50 DH/نهار لمدة 2 أيام عاد أطلق الحملة الحقيقية.")
         else:
             st.success("✅ **حساب قديم و خدام:** مزيان، تقدر تطلق نيشان بـ Budget اللي قلتي.")
-
         if page0 == "جديدة - 0 متابع":
-            st.write("**نصيحة الصفحة:** الصفحة الجديدة كتجيب CPL طالع شوية في الأول. زيد 3 بوستات ديال Reviews و فيديو ديال المنتج قبل ما تطلق، باش الناس ملي يدخلو يلقاو الثقة.")
-
+            st.write("**نصيحة الصفحة:** الصفحة الجديدة كتجيب CPL طالع شوية في الأول. زيد 3 بوستات ديال Reviews و فيديو ديال المنتج قبل ما تطلق.")
         st.write(f"**المارج ديالك:** {marge0:.0f} DH في البياسة. إلا بعتي بـ {prix_vente0:.0f} DH و CPL ديالك {cpl_min}-{cpl_max} DH، خاصك CONF + DELIV مزيانين باش تربح. سير لـ Tab 4 و حسبها.")
         if marge0 < 80:
             st.error(f"🚨 المارج قليل: {marge0:.0f} DH. بهاد الثمن صعيب تربح في COD. يا زيد الثمن لـ {prix_vente0+50:.0f} DH، يا دير Bundle 1+1، يا نقص ثمن الشراء.")
@@ -57,78 +51,62 @@ with tab0:
             st.warning(f"⚠️ المارج متوسط: {marge0:.0f} DH. خدم بـ Bundle باش تطلع AOV.")
         else:
             st.success(f"✅ المارج مزيان: {marge0:.0f} DH. تقدر تسكيلي.")
-
         total_test = budget0 * 3
         if total_test < 300:
-            st.error(f"🚨 Budget قليل: {budget0:.0f} DH/نهار × 3 أيام = {total_test:.0f} DH. هادا غير باش تعرف واش الفيديو خدام ولا لا، ماشي باش تبيع. إلا قدرتي، دير {budget0:.0f} × 3 أيام على الأقل = {budget0*3:.0f} DH، و الأفضل 450-600 DH للتيست.")
+            st.error(f"🚨 Budget قليل: {budget0:.0f} DH/نهار × 3 أيام = {total_test:.0f} DH. هادا غير باش تعرف واش الفيديو خدام ولا لا، ماشي باش تبيع.")
         else:
             st.success(f"✅ Budget التيست مزيان: {total_test:.0f} DH في 3 أيام. كافي باش تحكم.")
-
         st.divider()
         st.subheader("🏗️ STRUCTURE - كيفاش تبني الحملة في Ads Manager")
         st.write("**Campaign:** Sales - Leads / WhatsApp - CBO ولا ABO")
         st.write(f"**Ad Sets: 3** - كل Ad Set فيه فيديو واحد، Budget: {budget0/3:.0f} DH / Ad Set إلا كنتي ABO، ولا {budget0:.0f} DH كاملة إلا كنتي CBO")
         st.write(f"**Target:** {target0} | {ville0} | Broad - بلا اهتمامات ضيقة، خلي Facebook يقلب")
         st.write("**Placement:** Advantage+ - Facebook + Instagram + Reels")
-        st.write("")
         st.write("**Ad Set 1 - زاوية الألم:** 'كتعاني من ...؟'")
         st.write("**Ad Set 2 - زاوية الحياة اليومية:** 'ما بقيتيش كتقدر تمشى / تنعس / تخدم؟'")
         st.write("**Ad Set 3 - زاوية العرض:** 'توصيل فابور اليوم فقط + الدفع عند التوصيل'")
-        st.write("")
         st.write(f"**Ads:** {nb_videos0} فيديوهات. إلا عندك أقل من 3، دير نفس الفيديو بـ 3 Hooks مختلفين في أول 3 ثواني.")
-
         st.divider()
         st.subheader("🎯 CPL المتوقع + امتى نطفي و امتى نسكيلي؟")
         st.write(f"**إلا مشات مزيان:** CPL بين **{cpl_min} DH و {cpl_max} DH** - كمل و سكيلي +20% كل يومين.")
         st.write(f"**إلا مشات متوسطة:** CPL بين **{cpl_max+1} DH و {cpl_bad-5} DH** - خليه يكمل نهار آخر، بدل غير Hook.")
         st.write(f"**إلا مشات عيانة:** CPL فوق **{cpl_bad} DH** لمدة يومين = طفي.")
-        st.write("")
-        st.write("**القاعدة الذهبية ديال الطفي - حفضها:**")
         st.write(f"- صرفتي 50 DH و 0 Lead = طفي الـ Ad Set، المشكل في Hook")
         st.write(f"- صرفتي 100 DH و CTR أقل من 1% = المشكل في الفيديو / CTA")
         st.write(f"- صرفتي {budget0:.0f} DH و جبتي Leads و 0 تأكيد = المشكل في Call Center / Offer، ماشي في الإعلان")
         st.write(f"- CPL > {cpl_bad} DH لمدة 2 أيام = طفي الحملة كاملة و بدا وحدة جديدة")
         st.write(f"- CPL < {cpl_max} DH + Lead Rate > 10% = سكيلي: {budget0:.0f} -> {budget0*1.2:.0f} -> {budget0*1.44:.0f} DH")
-
         st.divider()
         st.subheader("✍️ Copywriter - الكوبي واجد، كوبيه نيشان")
         st.code(f"""كتعاني من {probleme0 if probleme0 else 'المشكل ديالك'}؟ 😩
-
 جربتي بزاف و والو؟
-
 {produit0 if produit0 else 'المنتج'} كيعاونك ترجع تتحرك مرتاح، و أكثر من 500 واحد في المغرب جربوه.
-
 ✅ النتيجة كتبان في أيام قليلة
 ✅ التوصيل فابور اليوم فقط
 ✅ الدفع عند التوصيل - ما تخلص حتى يوصلك
-
 👉 كليكي على الزر دابا و طلبي، العرض كيسالي اليوم!
 الثمن: {prix_vente0:.0f} DH فقط""", language="text")
-        st.write("**ممنوع في Meta:** 'كيحيد الألم نهائيا' / 'علاج سحري' / 'مضمون 100%'. هادو كيجيبو Ban. دير 'كيعاون' / 'كيساعد' / 'كيخفف'.")
-        st.write("**Hook للفيديو (أول 3 ثواني):** 'واش الركبة كتضرك ملي تنوض الصباح؟ شوف هادي...' + وري المشكل في الكاميرا، ماشي 'سلام عليكم اليوم جبت ليكم...'")
+        st.write("**ممنوع في Meta:** 'كيحيد الألم نهائيا' / 'علاج سحري' / 'مضمون 100%'. دير 'كيعاون' / 'كيساعد' / 'كيخفف'.")
+        st.write("**Hook للفيديو (أول 3 ثواني):** 'واش الركبة كتضرك ملي تنوض الصباح؟ شوف هادي...' + وري المشكل في الكاميرا.")
 
-# ================= TAB 1 - تحليل الحملة =================
+# ================= TAB 1 =================
 with tab1:
     st.subheader("📁 Upload Facebook Export")
     uploaded = st.file_uploader("Upload CSV / Excel من Meta Ads", type=["csv", "xlsx", "xls"], key="exp")
-    
     if uploaded is not None:
         if uploaded.name.endswith(".csv"):
             df = pd.read_csv(uploaded)
         else:
             df = pd.read_excel(uploaded)
-        
         if len(df) == 0 or "No data available" in str(df.values):
             st.error("🚨 الفايل خاوي! سير لـ Ads Manager و حيد الفلتر ديال التاريخ، دير Last 30 days ولا Lifetime، و عاود Export")
             st.stop()
-
         def find_col(possibles):
             for c in df.columns:
                 for p in possibles:
                     if p.lower() in c.lower():
                         return c
             return None
-
         col_campaign = find_col(["campaign name"])
         col_spend = find_col(["amount spent"])
         col_impr = find_col(["impressions"])
@@ -142,20 +120,17 @@ with tab1:
         col_atc = find_col(["adds to cart", "add to cart"])
         col_checkout = find_col(["checkouts initiated", "initiated checkouts"])
         col_results = find_col(["results"])
-
         def get(row, col, default=0):
             try:
                 if col is None: return default
                 v = row[col]
                 return float(str(v).replace(",", "").replace(" ", "")) if pd.notna(v) else default
             except: return default
-
         if col_campaign:
             selected = st.selectbox("Campaign Name", df[col_campaign].unique().tolist())
             row = df[df[col_campaign] == selected].iloc[0]
         else:
             row = df.iloc[0]
-
         spend = get(row, col_spend)
         impressions = get(row, col_impr)
         clicks_link = get(row, col_click_link)
@@ -167,7 +142,6 @@ with tab1:
         purchase_value = get(row, col_purchase_value)
         atc = get(row, col_atc)
         checkout = get(row, col_checkout)
-
         cpl = (spend/leads) if leads>0 else 999
         cpa = (spend/purchases) if purchases>0 else 0
         aov = (purchase_value/purchases) if purchases>0 else 0
@@ -181,7 +155,6 @@ with tab1:
         atc_rate = (atc/landing*100) if landing>0 else 0
         checkout_rate = (checkout/atc*100) if atc>0 else 0
         purchase_rate = (purchases/landing*100) if landing>0 else 0
-
         st.subheader("📊 الـ 39 ميتريك - الملخص")
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("AOV", f"{aov:.0f} DH")
@@ -192,7 +165,6 @@ with tab1:
         m2.metric("Checkout Rate", f"{checkout_rate:.1f}%")
         m3.metric("Purchase Rate", f"{purchase_rate:.1f}%")
         m4.metric("Lead Rate", f"{lead_rate:.1f}%")
-
         if purchases>0:
             if aov < cpa:
                 st.error(f"🚨 كتخسر! AOV {aov:.0f} DH أصغر من CPA {cpa:.0f} DH - زيد Bundle ولا Free Shipping من 400 DH")
@@ -200,10 +172,8 @@ with tab1:
                 st.warning(f"⚠️ ربح قليل - AOV {aov:.0f} DH قريب لـ CPA {cpa:.0f} DH - زيد عرض 1+1")
             else:
                 st.success(f"✅ AOV مزيان - {aov:.0f} DH أكبر من CPA {cpa:.0f} DH")
-
         if page_speed < 80 and page_speed>0:
             st.error(f"🚨 الصفحة ثقيلة - غير {page_speed:.0f}% وصلو للستور. خفف التصاور.")
-
         st.write("**الفيديو - من Ad بوحدو (ما كاينش فالـ Export)**")
         c1, c2 = st.columns(2)
         with c1:
@@ -220,68 +190,56 @@ with tab1:
         days = st.number_input("Days running?", min_value=1, value=3, key="days")
         current_budget = st.number_input("Current Daily Budget (MAD)", min_value=0.0, value=200.0, key="bud")
         target_cpl = st.number_input("Target CPL - شحال بغيتي تخلص على Lead؟ (MAD)", min_value=0.0, value=20.0, key="tcpl")
-
         if st.button("🤖 Analyze - فين المشكل و شحال نسكيلي؟", type="primary", key="ana1"):
             hook = (views_3s / impressions * 100) if impressions > 0 else 0
             hold = (views_15s / views_3s * 100) if views_3s > 0 else 0
             r50 = (v50 / impressions * 100) if impressions > 0 else 0
             r75 = (v75 / impressions * 100) if impressions > 0 else 0
-            
             st.divider()
             st.subheader("🏆 DECISION + شحال نسكيلي؟")
             if spend < 150:
-                st.info(f"⏳ WAIT - صرفتي غير {spend:.0f} MAD. خليها حتى 300-400 MAD عاد حكم. ما تحبس ما تسكيلي.")
+                st.info(f"⏳ WAIT - صرفتي غير {spend:.0f} MAD. خليها حتى 300-400 MAD عاد حكم.")
             elif hook >= 25 and ctr_link >= 1 and cpl <= target_cpl and lead_rate >= 10:
                 new_budget = current_budget * 1.2
                 new_budget_2 = new_budget * 1.2
                 st.success(f"🚀 SCALE! - سكيلي دابا!")
-                st.write(f"**علاش؟** Hook {hook:.1f}% مزيان + CTR {ctr_link:.2f}% مزيان + CPL {cpl:.1f} MAD أقل من الهدف ديالك {target_cpl:.0f} + Lead Rate {lead_rate:.1f}% مزيان.")
-                st.write(f"**شحال نزيد؟**")
+                st.write(f"**علاش؟** Hook {hook:.1f}% مزيان + CTR {ctr_link:.2f}% مزيان + CPL {cpl:.1f} MAD أقل من الهدف {target_cpl:.0f} + Lead Rate {lead_rate:.1f}% مزيان.")
                 st.write(f"اليوم: {current_budget:.0f} MAD -> بعد 2 أيام: **{new_budget:.0f} MAD** (+20%)")
                 st.write(f"من بعد 2 أيام أخرى: **{new_budget_2:.0f} MAD** (+20% عاود)")
                 st.write(f"إلا CPL طلع فوق {target_cpl*1.5:.0f} MAD، حبس السكيلينغ و رجع لـ {current_budget:.0f} MAD.")
                 st.write("**القاعدة الذهبية:** ما تزيدش كثر من 20% كل يومين، و ما تبدلش الفيديو ولا الجمهور ملي كتسكيلي.")
             elif hook < 20 and ctr_link < 0.8 and cpl > 40 and days >= 3:
-                st.error(f"🛑 KILL IT! - حبسها! Hook {hook:.1f}% + CTR {ctr_link:.2f}% + CPL {cpl:.1f} MAD - كلشي طايح و دازو {days} أيام. كتخسر {spend:.0f} MAD بلا فايدة. حبسها و بدا وحدة جديدة.")
+                st.error(f"🛑 KILL IT! - حبسها! Hook {hook:.1f}% + CTR {ctr_link:.2f}% + CPL {cpl:.1f} MAD - كلشي طايح و دازو {days} أيام.")
             else:
                 st.warning("🔧 FIX IT! - صايب المشكل اللي لتحت، ما تحبس ما تسكيلي.")
-
             st.divider()
             st.subheader("🔍 المشكل فين بالضبط؟ + علاش؟ + شنو ندير؟")
             if hook < 25:
                 st.error(f"🔴 المشكل هنا: HOOK - {hook:.1f}% (خاصو يكون فوق 25%)")
-                st.write("**علاش كاين المشكل؟** أول 3 ثواني ما شدّوش الناس. الناس ففيسبوك كيسكروليو بسرعة، إلا ما وقفتيهمش ف 3s اللولة، غادي يدوزو.")
-                st.write("**شنو خاصك تدير؟** بدل غير 3 ثواني اللولة: بدا بالمشكل: 'كتعاني من...؟' ولا بنتيجة: 'شوف النتيجة ف 7 أيام'. ما تبداش بلوغو ولا سلام. سير لـ Tab 2 و حط الفيديو ديالك، غادي نعطيك سكريبت جديد.")
+                st.write("**علاش؟** أول 3 ثواني ما شدّوش الناس. **شنو تدير؟** بدل غير 3 ثواني اللولة: بدا بالمشكل: 'كتعاني من...؟' ولا بنتيجة: 'شوف النتيجة ف 7 أيام'.")
             elif hold < 30:
                 st.error(f"🔴 المشكل هنا: HOLD - {hold:.1f}% (خاصو يكون فوق 30%)")
-                st.write("**علاش؟** Hook شدّهم ولكن الوسط ممل، هربو قبل 15s.")
-                st.write("**شنو تدير؟** قصر الفيديو ل 25-30 ثانية، العرض يبان قبل 10s، كل 3 ثواني دير شي حاجة جديدة (تصويرة، زوم، كتابة).")
+                st.write("**علاش؟** Hook شدّهم ولكن الوسط ممل. **شنو تدير؟** قصر الفيديو ل 25-30 ثانية، العرض يبان قبل 10s.")
             elif r50 - r75 > 10:
                 st.error(f"🔴 المشكل هنا: الفيديو طويل - هربو {r50-r75:.1f}% بين 50% و 75%")
-                st.write("**علاش؟** الناس ملّو فالوسط. **شنو تدير؟** قصر الفيديو، دير CTA فالوسط.")
+                st.write("**شنو تدير؟** قصر الفيديو، دير CTA فالوسط.")
             if ctr_link < 1:
                 st.error(f"🟠 المشكل هنا: CTA - CTR {ctr_link:.2f}% (خاصو فوق 1%)")
-                st.write("**علاش؟** الناس كملو الفيديو ولكن ما عرفوش شنو يديرو. **شنو تدير؟** فاللخر قول: 'كليكي على اللين دابا، العرض كيسالي اليوم' + الثمن واضح + زر كيبان.")
+                st.write("**شنو تدير؟** فاللخر قول: 'كليكي على اللين دابا، العرض كيسالي اليوم' + الثمن واضح + زر كيبان.")
             elif cpc > 3:
-                st.error(f"🟠 المشكل هنا: CPC غالي - {cpc:.2f} MAD")
-                st.write("**علاش؟** الجمهور غالط. **شنو تدير؟** جرب Broad بلا اهتمامات.")
+                st.error(f"🟠 المشكل هنا: CPC غالي - {cpc:.2f} MAD - جرب Broad بلا اهتمامات.")
             if landing_rate < 70:
-                st.error(f"🟠 المشكل هنا: الصفحة ثقيلة - دخلو غير {landing_rate:.0f}%")
-                st.write(f"**علاش؟** كليكاو {clicks_link:.0f} ولكن دخلو غير {landing:.0f}. الصفحة كتعطل {load_time:.1f}s. **شنو تدير؟** صغر التصاور، حيد الفيديو الكبير فالبداية، خاصها تحل فأقل من 2s.")
+                st.error(f"🟠 المشكل هنا: الصفحة ثقيلة - دخلو غير {landing_rate:.0f}% - صغر التصاور، خاصها تحل فأقل من 2s.")
             elif bounce > 70:
-                st.error(f"🟠 المشكل هنا: Bounce {bounce:.0f}%")
-                st.write("**علاش؟** الميساج ديال الفيديو ماشي هو الميساج ديال الصفحة. **شنو تدير؟** نفس المنتج، نفس الثمن، نفس العرض فالفيديو و فالصفحة.")
+                st.error(f"🟠 المشكل هنا: Bounce {bounce:.0f}% - الميساج ديال الفيديو ماشي هو الميساج ديال الصفحة.")
             elif lead_rate < 10:
-                st.error(f"🟠 المشكل هنا: الصفحة ما كتقنعش - غير {lead_rate:.1f}% عمرو الفورم")
-                st.write("**علاش؟** الصفحة ما فيهاش ثقة. **شنو تدير؟** الثمن واضح الفوق؟ Reviews كيبانو؟ عرض: توصيل فابور؟ زر 'اطلب الان' كبير؟")
-
+                st.error(f"🟠 المشكل هنا: الصفحة ما كتقنعش - غير {lead_rate:.1f}% عمرو الفورم - الثمن واضح؟ Reviews؟ زر كبير؟")
             st.divider()
             st.write(f"📉 Funnel: Impressions {impressions:.0f} -> 3s {views_3s} ({hook:.0f}%) -> Link Clicks {clicks_link:.0f} -> Landing {landing:.0f} ({landing_rate:.0f}%) -> Leads {leads:.0f} ({lead_rate:.1f}%) | CPL {cpl:.1f} | CPM {cpm:.1f} | CPC {cpc:.2f} | AOV {aov:.0f} | ROAS {roas:.2f}x")
 
-# ================= TAB 2 - تحليل الفيديو + الكوبي =================
+# ================= TAB 2 =================
 with tab2:
     st.subheader("🎬 حط ليا الفيديو و Ad Copy ديالك - نقول ليك فين الخلل")
-    st.write("هادي بلاصة بوحدها ديال الفيديو. هنا كنحلو الفيديو بالتفصيل.")
     product = st.text_input("شنو المنتج؟", placeholder="مثال: كريم تبييض، ساعة، مكينة قهوة...")
     problem_product = st.text_input("شنو المشكل اللي كيحل المنتج؟", placeholder="مثال: البشرة كحلة، النعاس قليل...")
     audience = st.selectbox("شكون الجمهور؟", ["نساء 18-35", "نساء 35-55", "رجال 18-35", "رجال 35-55", "الأمهات", "الشباب"])
@@ -301,7 +259,6 @@ with tab2:
         if "سلام" in hook_text or "اليوم جبت" in hook_text or len(hook_text) < 10:
             st.error("🔴 الخلل فالـ HOOK - أول 3 ثواني ميتين!")
             st.write(f"**قلتي:** '{hook_text}' - هادا Hook ديال يوتيوب، ماشي ديال فيسبوك. الناس غادي يدوزو.")
-            st.write("**الحل:** بدل Hook. جرب واحد من هادو:")
         else:
             st.success("✅ Hook مزيان، ما فيهش مشكل كبير.")
         st.write("**🎬 السكريبت الجديد اللي خاصك تدير (30 ثانية):**")
@@ -335,24 +292,17 @@ with tab2:
             st.warning("🟠 ما كاينش عرض! زيد عرض باش الناس يكليكيو دابا.")
         st.write("**✍️ Ad Copy الجديد اللي خاصك تكتب (كوبيه نيشان):**")
         st.code(f"""كتعاني من {problem_product}؟ 😩
-
 جربتي بزاف و والو؟ حيت المشكل ماشي فيك، المشكل فالمنتج اللي كنتي كتستعملي.
-
 {product} كيحلها ليك ف 7 أيام، و أكثر من 500 بنت جربوه فالمغرب و عجبهم.
-
 ✅ النتيجة كتبان ف 7 أيام
 ✅ التوصيل فابور اليوم فقط
 ✅ الدفع عند التوصيل - ما تخلصي حتى يوصلك
-
 👉 كليكي على اللين دابا و طلبي، العرض كيسالي اليوم!
-
 # {product}""", language="text")
 
-# ================= TAB 4 - محلل COD =================
+# ================= TAB 4 =================
 with tab4:
     st.subheader("🩺 محلل COD - دخل النسب ديالك، نعطيك المشكل + الحل + علاش")
-    st.write("دخل الأرقام الحقيقية ديالك ديال آخر 3 أيام، و جاوب على الأسئلة، و غادي نعطيك التشخيص بالضبط.")
-
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         cod_cpl = st.number_input("CPL - ثمن الليد (DH)", min_value=0.0, value=25.0, key="cod_cpl")
@@ -363,7 +313,6 @@ with tab4:
     with c4:
         cod_price = st.number_input("ثمن البيع (DH)", min_value=0.0, value=200.0, key="cod_price")
         cod_cost = st.number_input("ثمن الشراء + التوصيل (DH)", min_value=0.0, value=100.0, key="cod_cost")
-
     st.divider()
     st.write("### ❓ جاوب على هاد الأسئلة باش نعرف المشكل بالضبط")
     q1 = st.selectbox("1. شحال كتعطل باش تعيط للكليان من بعد ما يعمر الفورم؟", ["أقل من 5 دقايق", "بين 5 و 30 دقيقة", "بين 1 و 3 ساعات", "حتى للغد"], key="cod_q1")
@@ -371,7 +320,6 @@ with tab4:
     q3 = st.selectbox("3. شنو كيوقع ملي كيوصل الكولي للكليان؟", ["ما كيشدوش التليفون", "كيقول ما عنديش فلوس", "كيقول ما بغيتوش", "كيشدو عادي"], key="cod_q3")
     q4 = st.selectbox("4. مناش كتعيط؟", ["نمرة عادية 06", "نمرة Fix", "واتساب فقط", "ما كنعيطش"], key="cod_q4")
     q5 = st.selectbox("5. شحال كيدير التوصيل باش يوصل؟", ["1-2 أيام", "3-4 أيام", "5 أيام و كثر"], key="cod_q5")
-
     if st.button("🤖 حلل ليا COD - شنو هو المشكل؟", type="primary", key="ana_cod"):
         st.divider()
         profit_per_sale = cod_price - cod_cost
@@ -381,7 +329,6 @@ with tab4:
         else:
             cost_per_delivered = 999
             net = -999
-
         st.subheader("📊 الحساب ديالك")
         st.write(f"**الربح في بياسة وحدة:** {profit_per_sale:.0f} DH | **باش تجيب بياسة وحدة موصلة كتخلص:** {cost_per_delivered:.0f} DH في الإعلان | **النتيجة النهائية:** {net:.0f} DH")
         if net < 0:
@@ -390,202 +337,263 @@ with tab4:
             st.warning(f"⚠️ ربح قليل بزاف: غير {net:.0f} DH في البياسة. خاصك تحسن CONF ولا DELIV.")
         else:
             st.success(f"✅ رابح {net:.0f} DH في البياسة. كمل و سكيلي.")
-
         st.divider()
         st.subheader("🔍 هادا هو المشكل ديالك + هادا هو الحل + علاش")
-
         if cod_cpl > 35:
             st.error(f"🔴 المشكل رقم 1: CPL طالع - {cod_cpl:.0f} DH (الطبيعي في المغرب 15-30 DH)")
-            st.write("**هادا هو الحل:** بدل Hook ديال الفيديو، و جرب Broad بلا اهتمامات، و نقص البودجيت لـ 200 DH في النهار.")
-            st.write("**علاش؟** حيت Facebook كيورّي الإعلان ديالك لناس غالطين ولا الفيديو ما شدّهمش، داكشي علاش كيجيك الليد غالي. ملي كيكون Hook ضعيف، Facebook كيحسب أن الإعلان ديالك ماشي مزيان و كيغلي عليك الثمن. إلا صايبتي Hook، CPL غادي يطيح بوحدو.")
+            st.write("**الحل:** بدل Hook ديال الفيديو، و جرب Broad بلا اهتمامات، و نقص البودجيت لـ 200 DH في النهار.")
+            st.write("**علاش؟** حيت Facebook كيورّي الإعلان ديالك لناس غالطين ولا الفيديو ما شدّهمش، داكشي علاش كيجيك الليد غالي.")
             if q2 == "كيقول ليا ما عمرتش أنا":
-                st.write("**زيد عليها:** بزاف ديال الناس كيقولو ما عمرتش، هادا معناه أن الفورم ديالك كيبان ليهم بالغلط ولا كتستهدف ناس كبار ما كيعرفوش يعمرّو. بدّل الصفحة و دير زر واضح 'اطلب الآن'.")
-
+                st.write("**زيد عليها:** بزاف كيقولو ما عمرتش، هادا معناه أن الفورم كيبان ليهم بالغلط ولا كتستهدف ناس كبار ما كيعرفوش يعمرّو.")
         if cod_conf < 60:
             st.error(f"🔴 المشكل رقم 2: CONF طايح - {cod_conf:.0f}% (الطبيعي 60-75%)")
             if q1 in ["بين 1 و 3 ساعات", "حتى للغد"]:
-                st.write("**هادا هو المشكل ديالك بالضبط:** كتعطل باش تعيط.")
-                st.write("**هادا هو الحل:** عيط في أقل من 5 دقايق. دير Notification في التليفون ديالك ملي يدخل Lead جديد، و عيط دغيا.")
-                st.write("**علاش؟** حيت الكليان ملي كيعمر الفورم، كيكون سخون و متحمس و بغا يشري دابا. إلا خليتيه 1 ساعة، كيبرد، كيمشي عند واحد آخر، ولا كينسى، ولا كيبدل رايو. 5 دقايق اللولة هي اللي كتقرر واش غادي يأكد ولا لا.")
+                st.write("**المشكل:** كتعطل باش تعيط. **الحل:** عيط في أقل من 5 دقايق. **علاش؟** حيت الكليان ملي كيعمر الفورم، كيكون سخون و بغا يشري دابا. إلا خليتيه 1 ساعة، كيبرد و كيمشي عند واحد آخر.")
             if q4 in ["نمرة Fix", "واتساب فقط", "ما كنعيطش"]:
-                st.write("**هادا هو الحل الثاني:** عيط من نمرة عادية 06، ماشي Fix و ماشي واتساب فقط.")
-                st.write("**علاش؟** حيت المغاربة ما كيجاوبوش على النمرة Fix، كيحساب ليهم شركة ولا بنك. و واتساب بوحدو ما كافيش، حيت بزاف ما كيشوفوش الميساج. النمرة العادية 06 هي اللي كيجاوبو عليها.")
+                st.write("**الحل الثاني:** عيط من نمرة عادية 06، ماشي Fix و ماشي واتساب فقط. **علاش؟** حيت المغاربة ما كيجاوبوش على Fix.")
             if q2 == "كيقول ليا غالي":
-                st.write("**هادا هو المشكل ديالك:** الكليان كيقول غالي.")
-                st.write("**هادا هو الحل:** ما تنقصش الثمن! قول ليه: 'الثمن فيه التوصيل، و الدفع عند التوصيل، و إلا ما عجبكش ما تخلصش'. و زيد عرض: 'إلا خديتي 2، التانية بنص الثمن'.")
-                st.write("**علاش؟** حيت الكليان ما كيقولش غالي حيت فعلا غالي، كيقولها حيت ما حسش بالقيمة. ملي كتشرح ليه التوصيل و الدفع عند التوصيل و الضمان، كيحس بالثقة و كيأكد.")
+                st.write("**المشكل:** كيقول غالي. **الحل:** ما تنقصش الثمن! قول ليه: 'الثمن فيه التوصيل، و الدفع عند التوصيل'. **علاش؟** حيت ما حسش بالقيمة، ملي كتشرح ليه، كيأكد.")
             if q2 == "كيقول ليا نشاور و نرجع":
-                st.write("**هادا هو المشكل ديالك:** الكليان كيقول نشاور و نرجع.")
-                st.write("**هادا هو الحل:** ما تخليهش يمشي. قول ليه: 'واخا شاوري، ولكن نحجز ليك واحد؟ حيت Stock كيسالي اليوم و الثمن غادي يطلع غدا'. و عاود عيط ليه من بعد 2 ساعات.")
-                st.write("**علاش؟** حيت 'نشاور و نرجع' معناها 'ما اقتنعتش'. إلا خليتيه يمشي بلا ما تحجز ليه، 90% ما غاديش يرجع. إلا حجزتي ليه و عاودتي عيطتي، غادي يأكد.")
+                st.write("**المشكل:** كيقول نشاور و نرجع. **الحل:** قول ليه: 'نحجز ليك واحد؟ Stock كيسالي اليوم'. و عاود عيط ليه من بعد 2 ساعات. **علاش؟** حيت 'نشاور و نرجع' معناها 'ما اقتنعتش'. إلا خليتيه يمشي، 90% ما غاديش يرجع.")
             if q2 == "ما كيجاوبش":
-                st.write("**هادا هو المشكل ديالك:** الكليان ما كيجاوبش.")
-                st.write("**هادا هو الحل:** عيط 3 مرات في أوقات مختلفة: مرة في الصباح، مرة في العشية، مرة في الليل. و صيفط ليه واتساب: 'السلام، أنا فلان، عمرتي الفورم على المنتج، بغيتي نأكد ليك الطلب؟'")
-                st.write("**علاش؟** حيت بزاف ديال الناس كيكونو خدامين و ما كيجاوبوش في النهار. إلا عيطتي مرة وحدة و حبستي، غادي تخسر Lead خلصتي عليه فلوس. 3 محاولات كيطلعو CONF ديالك بـ 15%.")
-
+                st.write("**المشكل:** ما كيجاوبش. **الحل:** عيط 3 مرات في أوقات مختلفة + واتساب. **علاش؟** حيت بزاف كيكونو خدامين. 3 محاولات كيطلعو CONF بـ 15%.")
         if cod_deliv < 65:
             st.error(f"🔴 المشكل رقم 3: DELIV طايح - {cod_deliv:.0f}% (الطبيعي 65-80%)")
             if q3 == "ما كيشدوش التليفون":
-                st.write("**هادا هو المشكل ديالك:** الكليان ما كيشدش التليفون ملي كيوصلو الكولي.")
-                st.write("**هادا هو الحل:** ملي كتأكد، قول ليه: 'غدا غادي يعيط ليك التوصيل من هاد النمرة، عافاك شد التليفون'. و نهار التوصيل، صيفط ليه واتساب: 'الكولي ديالك خرج اليوم، وجد الفلوس عافاك'.")
-                st.write("**علاش؟** حيت الكليان كينسى أنه طلب، و ملي كيشوف نمرة غريبة ديال التوصيل، ما كيجاوبش. إلا وجدتيه قبل، غادي يشد التليفون و يشد الكولي.")
+                st.write("**المشكل:** ما كيشدش التليفون ملي كيوصلو الكولي. **الحل:** ملي كتأكد، قول ليه: 'غدا غادي يعيط ليك التوصيل، عافاك شد التليفون'. **علاش؟** حيت كينسى أنه طلب.")
             if q3 == "كيقول ما عنديش فلوس":
-                st.write("**هادا هو المشكل ديالك:** الكليان كيقول ما عنديش فلوس.")
-                st.write("**هادا هو الحل:** ملي كتأكد، سولو: 'واش الفلوس واجدين؟ واش غادي تكون في الدار نهار كدا؟' إلا قال ليك لا، ما تصيفطش ليه، غادي يرجع و تخسر فلوس التوصيل.")
-                st.write("**علاش؟** حيت بزاف ديال الناس كيأكدو و هما ما عندهمش الفلوس، و ملي كيوصل الكولي كيقولو ما عنديش. التأكيد الحقيقي هو ملي كتسولو على الفلوس و على الوقت، ماشي غير 'واخا صيفط'.")
+                st.write("**المشكل:** كيقول ما عنديش فلوس. **الحل:** ملي كتأكد، سولو: 'واش الفلوس واجدين؟' إلا قال لا، ما تصيفطش ليه. **علاش؟** حيت غادي يرجع و تخسر فلوس التوصيل.")
             if q3 == "كيقول ما بغيتوش":
-                st.write("**هادا هو المشكل ديالك:** الكليان كيقول ما بغيتوش ملي كيوصل.")
-                st.write("**هادا هو الحل:** هادا معناه أن التأكيد ديالك كان ضعيف. ملي كتأكد، عاود ليه المنتج + الثمن + المدينة بالضبط، و قول ليه: 'إلا ما بغيتيهش، قولها ليا دابا باش ما نصيفطوش و ما نخسروش بجوج'.")
-                st.write("**علاش؟** حيت الكليان ملي كيأكد و هو ما متأكدش، ملي كيوصل الكولي كيتراجع. إلا خليتيه يقول 'لا' في التأكيد، غادي توفر فلوس التوصيل و الإرجاع.")
+                st.write("**المشكل:** كيقول ما بغيتوش ملي كيوصل. **الحل:** ملي كتأكد، عاود ليه المنتج + الثمن + المدينة، و قول ليه: 'إلا ما بغيتيهش، قولها ليا دابا'. **علاش؟** حيت التأكيد كان ضعيف.")
             if q5 in ["3-4 أيام", "5 أيام و كثر"]:
-                st.write("**هادا هو الحل الثاني:** التوصيل كيتعطل بزاف.")
-                st.write("**هادا هو الحل:** بدل شركة التوصيل، ولا صيفط من المدينة اللي قريبة للكليان. خاص التوصيل يوصل في 1-2 أيام.")
-                st.write("**علاش؟** حيت الكليان كيكون سخون نهار كيأكد، و كل نهار كيدوز، كيبرد. إلا وصل الكولي من بعد 5 أيام، 50% ديال الناس ما غاديش يشدوه، حيت نساو ولا لقاو واحد آخر ولا ما بقاوش بغاوه.")
-
+                st.write("**المشكل:** التوصيل كيتعطل بزاف. **الحل:** بدل شركة التوصيل. خاص يوصل في 1-2 أيام. **علاش؟** حيت كل نهار كيدوز، الكليان كيبرد و 50% ما غاديش يشدوه.")
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
-            st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين، و ما تبدل والو.")
+            st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين.")
 
-# ================= TAB 5 - محلل Landing Page - Expert COD المغرب =================
+# ================= TAB 5 - محلل Landing Page - أوتوماتيك + تصاور + ترتيب الصفحة =================
 with tab5:
-    st.subheader("🌐 حط ليا اللين ديال الستور / Landing Page - نقول ليك واش غادي يبيع ولا لا")
-    st.write("أنا Expert في COD المغرب. غادي ندخل للسيت ديالك، نجربو بحال كليان، و نعطيك تقييم من 1 حتى 10 + الحلول.")
-
-    url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url")
-    
-    st.divider()
-    st.write("### ❓ جاوب على هادو - باش نعرف Upsell / Cross-sell و التجربة كاملة")
-    c1, c2 = st.columns(2)
-    with c1:
-        q_upsell = st.selectbox("1. ملي كليان كيزيد للسلة / كيعمر الفورم، واش كيبان ليه Upsell؟ (زيد واحد آخر بنص الثمن)", ["لا، ما كاينش", "إيه، كاين Upsell", "ما عرفتش"], key="lp_upsell")
-        q_cross = st.selectbox("2. واش كاين Cross-sell؟ (منتج آخر معاه)", ["لا، ما كاينش", "إيه، كاين", "ما عرفتش"], key="lp_cross")
-        q_bundle = st.selectbox("3. واش كاين Bundle 1+1 ولا 2+1؟", ["لا", "إيه، كاين", "ما عرفتش"], key="lp_bundle")
-        q_cod_text = st.selectbox("4. واش مكتوب 'الدفع عند التوصيل' واضح الفوق؟", ["إيه، واضح", "لا، ما كاينش", "مخبي لتحت"], key="lp_cod")
-    with c2:
-        q_prix_lp = st.selectbox("5. واش الثمن كايبان في أول شاشة بلا ما تسكرولي؟", ["إيه، كايبان", "لا، خاصك تسكرولي باش تلقاه", "ما كاينش ثمن"], key="lp_prix")
-        q_reviews_lp = st.selectbox("6. واش كاين Reviews / تعليقات ديال المغاربة؟", ["إيه، كاين بزاف + تصاور", "إيه، ولكن غير كتابة", "لا، ما كاينش"], key="lp_rev")
-        q_video_lp = st.selectbox("7. واش كاين فيديو ديال المنتج كيخدم في الصفحة؟", ["إيه، كاين", "لا، غير تصاور", "لا، والو"], key="lp_vid")
-        q_colors = st.selectbox("8. كيفاش الألوان ديال الستور؟", ["متناسق - لون واحد + أبيض", "مخربق - بزاف ديال الألوان", "كحل و حمر بزاف"], key="lp_colors")
-
-    q_form = st.selectbox("9. الفورم ديالك كيفاش؟", ["قصير - سميت + نمرة + مدينة فقط", "طويل - كيطلب بزاف ديال المعلومات", "ما كاينش فورم، غير واتساب"], key="lp_form")
-    q_test_order = st.selectbox("10. جربتي تكموندي بـ Test؟ شنو وقع؟", ["ما جربتش", "جربت و دازت مزيان", "جربت و تلاقيت مشكل"], key="lp_test")
-
-    if st.button("🤖 حلل ليا الستور ديالي - واش غادي يبيع؟", type="primary", key="btn_lp"):
+    st.subheader("🌐 حط اللين - أنا ندخل نشوف الستور، التصاور، و كيفاش حاط Landing Page")
+    st.write("أنا غادي ندخل، نجبد التصاور كاملين، نشوف شحال تقال، واش عيانين ولا مزيانين، و نشوف الترتيب ديال الصفحة: شنو حاط اللول و شنو حاط اللخر. ما غاديش نسولك والو من غير Upsell / Cross-sell.")
+    url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url3")
+    st.write("### ❓ غير هاد الجوج اللي ما نقدرش نشوفهم من برا")
+    q_upsell3 = st.selectbox("1. واش داير Upsell؟ (ملي كيعمر الفورم، كيبان ليه زيد واحد آخر بنص الثمن؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_upsell3")
+    q_cross3 = st.selectbox("2. واش داير Cross-sell؟ (منتج آخر معاه؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_cross3")
+    st.write("### 📸 إلا بغيتي نشوف الديزاين بعينيا - حط سكرين ديال الصفحة هنا")
+    lp_screenshot = st.file_uploader("حط سكرينشوت ديال Landing Page ديالك (من التليفون)", type=["png", "jpg", "jpeg"], key="lp_shot")
+    if lp_screenshot:
+        st.image(lp_screenshot, caption="هادي هي الصفحة اللي غادي نقيمها", width=350)
+        st.info("✅ واخا، ملي تحط السكرين، شوفها بعينيك: إلا الثمن ما كيبانش في أول شاشة، طلعو. إلا الزر صغير، كبرو. إلا التصويرة اللولة مظلمة، بدلها.")
+    if st.button("🤖 دخل شوف الستور ديالي و قيمو ليا - تصاور + ترتيب + كلشي", type="primary", key="btn_lp3"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
         else:
-            import time
-            try:
-                t0 = time.time()
-                r = requests.get(url_site, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
-                load = time.time() - t0
-                html = r.text.lower()
-                has_price = any(x in html for x in ["dh", "درهم", "mad", "د.م"])
-                has_cta = any(x in html for x in ["اطلب", "اشتري", "commander", "add to cart", "buy now", "اطلب الان"])
-                has_whatsapp = "whatsapp" in html or "wa.me" in html
-                nb_img = html.count("<img")
-                status = r.status_code
-                st.write(f"✅ دخلت للسيت ديالك: Status {status} | السرعة: {load:.1f}s | عدد التصاور: {nb_img}")
-            except Exception as e:
-                load = 5.0
-                has_price, has_cta, has_whatsapp, nb_img = False, False, False, 0
-                st.warning(f"⚠️ ما قدرتش ندخل للسيت أوتوماتيك (خاصك تحل VPN ولا السيت محمي). غادي نحلل غير من الأجوبة ديالك. الخطأ: {e}")
-
-            st.divider()
+            import time, re
+            from urllib.parse import urljoin
+            with st.spinner("⏳ دابا داخل للستور... كنجبد التصاور، كنقيسهم، كنشوف كيفاش حاط الصفحة..."):
+                try:
+                    t0 = time.time()
+                    r = requests.get(url_site, timeout=15, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    load = time.time() - t0
+                    html = r.text
+                    html_low = html.lower()
+                    size_kb = len(r.content) / 1024
+                    status = r.status_code
+                except Exception as e:
+                    st.error(f"🚨 ما قدرتش ندخل للستور. الخطأ: {e}")
+                    st.stop()
+            st.success(f"✅ دخلت للستور: Status {status} | السرعة: {load:.1f}s | الحجم الكامل: {size_kb:.0f} KB")
+            img_srcs = re.findall(r'<img[^>]*src=[\"\']([^\"\']+)[\"\']', html)
+            img_alts = re.findall(r'<img[^>]*alt=[\"\']([^\"\']*)[\"\']', html)
+            nb_img = len(img_srcs)
+            imgs_no_alt = nb_img - len([a for a in img_alts if a.strip() != ""])
+            has_lazy = "loading=\"lazy\"" in html_low or "lazy" in html_low
+            img_details = []
+            heavy_imgs = 0
+            for src in img_srcs[:5]:
+                try:
+                    full = urljoin(url_site, src)
+                    hr = requests.head(full, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
+                    sz = int(hr.headers.get("content-length", 0)) / 1024 if hr.headers.get("content-length") else 0
+                    if sz > 300:
+                        heavy_imgs += 1
+                    img_details.append((src[:60], sz))
+                except:
+                    pass
+            def pos(word):
+                idx = html_low.find(word)
+                return idx if idx != -1 else 999999999
+            pos_price = min([pos(x) for x in ["dh", "درهم", "mad"]])
+            pos_cta = min([pos(x) for x in ["اطلب", "add to cart", "buy now"]])
+            pos_form = pos("<form")
+            pos_reviews = min([pos(x) for x in ["review", "avis", "تقييم"]])
+            pos_video = min([pos(x) for x in ["<video", "youtube", ".mp4"]])
+            total_len = len(html_low) if len(html_low) > 0 else 1
+            order = sorted([("الثمن", pos_price), ("زر الشراء", pos_cta), ("الفورم", pos_form), ("Reviews", pos_reviews), ("فيديو", pos_video)], key=lambda x: x[1])
+            order_str = " -> ".join([o[0] for o in order if o[1] < 999999999])
+            forms = re.findall(r'<form.*?</form>', html_low, flags=re.DOTALL)
+            inputs = re.findall(r'<input[^>]*>', html_low)
+            nb_inputs = len(inputs)
+            has_price = pos_price < 999999999
+            has_cta = pos_cta < 999999999
+            has_cod = "الدفع عند التوصيل" in html or "cash on delivery" in html_low
+            has_free_ship = "فابور" in html or "free shipping" in html_low
+            has_reviews = pos_reviews < 999999999
+            has_video = pos_video < 999999999
+            has_bundle = any(x in html_low for x in ["1+1", "2+1", "bundle", "pack"])
+            colors_found = re.findall(r'#(?:[0-9a-fA-F]{3}){1,2}\b', html)
+            colors_unique = list(set([c.lower() for c in colors_found if c.lower() not in ["#fff", "#ffffff", "#000", "#000000", "#f5f5f5", "#eeeeee"]]))
+            nb_colors = len(colors_unique)
             score = 0
             problems = []
             solutions = []
-
+            details = []
+            # --- التصاور 2.5 ---
+            details.append(f"🖼️ **التصاور: لقيت {nb_img} تصويرة في الصفحة**")
+            if nb_img == 0:
+                problems.append("🚨 **ما كاينش تصاور:** دخلت و ما لقيتش حتى تصويرة! كيفاش غادي يشري الكليان حاجة ما شافهاش؟")
+                solutions.append("الصفحة بلا تصاور = 0 مبيعات. حط 5 تصاور على الأقل: تصويرة كبيرة ديال المنتج، تصويرة كيخدم، تصويرة قبل / بعد، تصويرة ديال العلبة، تصويرة ديال كليان كيستعملو.")
+            elif nb_img < 3:
+                score += 0.5
+                problems.append(f"🟠 **التصاور قلال بزاف:** غير {nb_img} تصاور. الكليان كيبغي يشوف المنتج من كل الجهات.")
+                solutions.append("زيد تصاور: المنتج بوحدو، المنتج في اليد، المنتج كيخدم، قبل / بعد، Reviews بتصاور. الصفحة اللي كتبيع فيها 5-7 تصاور.")
+            else:
+                score += 1
+                details.append(f"✅ عدد التصاور مزيان: {nb_img} تصاور.")
+            if img_details:
+                details.append(f"⚖️ **وزن أول 5 تصاور:** " + " | ".join([f"{n} : {s:.0f}KB" for n, s in img_details]))
+            if heavy_imgs > 0:
+                problems.append(f"🚨 **التصاور تقال بزاف:** لقيت {heavy_imgs} تصويرة فوق 300KB. هادو هما اللي مثقلين الستور ديالك و مخليينو يحل في {load:.1f}s.")
+                solutions.append("صغر كل تصويرة لـ أقل من 200KB. سير لـ tinypng.com، حط التصاور ديالك، و عاود طلعهم. الصفحة غادي تحل في 2s و CPL غادي يطيح.")
+            else:
+                if nb_img > 0:
+                    score += 0.5
+                    details.append("✅ وزن التصاور مزيان، ماشي تقال.")
+            if imgs_no_alt > 0:
+                problems.append(f"🟠 **التصاور بلا وصف:** {imgs_no_alt} تصويرة بلا Alt. Google و Facebook ما كيفهموش شنو فيهم.")
+                solutions.append("في كل تصويرة، كتب شنو فيها: 'كريم المفاصل - العلبة'، ماشي 'IMG_1234'. هادا كيعاون Facebook يفهم المنتج.")
+            else:
+                if nb_img > 0:
+                    score += 0.5
+            if not has_lazy and nb_img > 4:
+                problems.append("🟠 **التصاور كاملين كيتحملو دقة وحدة:** الصفحة كتحل و هي كتجيب 7 تصاور دقة وحدة، داكشي علاش ثقيلة.")
+                solutions.append("دير Lazy Loading: التصاور اللي لتحت ما يتحملوش حتى يسكرولي ليهم الكليان.")
+            else:
+                if nb_img > 0:
+                    score += 0.5
+            # --- ترتيب 2 ---
+            details.append(f"📐 **ترتيب الصفحة ديالك (شنو حاط اللول):** {order_str if order_str else 'ما لقيتش ترتيب واضح'}")
+            if pos_price / total_len < 0.30:
+                score += 1
+                details.append("✅ الثمن حاطو الفوق، في أول الصفحة. مزيان، الكليان كيشوفو دغيا.")
+            elif has_price:
+                problems.append(f"🚨 **الثمن مخبي لتحت:** حاط الثمن في {pos_price/total_len*100:.0f}% من الصفحة، يعني الكليان خاصو يسكرولي بزاف باش يلقاه. 60% غادي يخرجو قبل ما يوصلولو.")
+                solutions.append("طلع الثمن الفوق، في أول شاشة، كبير و واضح، معاه 'الدفع عند التوصيل'. الكليان المغربي أول حاجة كيقلب عليها هي الثمن.")
+            else:
+                problems.append("🚨 **ما لقيتش الثمن في الصفحة:** كيفاش غادي يشري و هو ما عارفش الثمن؟")
+                solutions.append("زيد الثمن الفوق، كبير، و معاه العرض.")
+            if has_cta and has_price and pos_cta / total_len < 0.40:
+                score += 0.5
+                details.append("✅ زر الشراء حاطو الفوق، كيبان دغيا.")
+            else:
+                problems.append("🟠 **زر الشراء مخبي لتحت:** الكليان كيشوف المنتج و ما كيلقاش فين يشري، كيخرج.")
+                solutions.append("دير زر 'اطلب الآن' في 3 بلايص: الفوق، في الوسط من بعد Reviews، و في اللخر. و يكون كبير و لون واحد.")
+            if has_reviews and pos_reviews < pos_form:
+                score += 0.5
+                details.append("✅ Reviews حاطهم قبل الفورم، هادا هو الصح. الكليان كيتيق عاد كيعمر.")
+            elif has_reviews:
+                problems.append("🟠 **Reviews حاطهم من بعد الفورم:** الكليان كيوصل للفورم و هو باقي ما تيقش، ما غاديش يعمر.")
+                solutions.append("طلع Reviews الفوق، قبل الفورم. الترتيب الصحيح: تصويرة + ثمن + فيديو + Reviews + فورم + زر.")
+            else:
+                problems.append("🚨 **ما كاينش Reviews في الصفحة:** 0 ثقة.")
+                solutions.append("زيد 5 Reviews بتصاور مغاربة قبل الفورم. بلا Reviews، الكليان ما كيتيقش و ما كيعمّرش.")
+            # --- سرعة 1.5 ---
+            details.append(f"⚡ **السرعة: {load:.1f}s | الحجم: {size_kb:.0f} KB**")
             if load <= 2:
-                score += 2
+                score += 1.5
+                details.append("✅ السرعة مزيانة.")
             elif load <= 3.5:
-                score += 1
-                problems.append(f"🐢 **السرعة:** {load:.1f}s - ثقيلة. الكليان المغربي ما كيتسناش كثر من 2s، كيخرج.")
-                solutions.append("صغر التصاور لـ أقل من 200KB، حيد الفيديو الكبير من اللول، خلي الصفحة تحل في أقل من 2s.")
-            else:
-                problems.append(f"🚨 **السرعة كارثة:** {load:.1f}s - 70% ديال الناس غادي يخرجو قبل ما يشوفو المنتج.")
-                solutions.append("السيت ثقيل بزاف. بدل الثيم، صغر التصاور، حيد أي تطبيق زايد.")
-
-            if q_prix_lp == "إيه، كايبان":
-                score += 1.5
-            else:
-                problems.append("🚨 **الثمن مخبي:** الكليان ما لقاش الثمن في أول شاشة، غادي يخرج و يمشي عند واحد آخر.")
-                solutions.append("دير الثمن الفوق، كبير و واضح، معاه 'الدفع عند التوصيل' و 'التوصيل فابور'.")
-
-            if q_bundle == "إيه، كاين":
-                score += 1.5
-            else:
-                problems.append("🟠 **ما كاينش عرض / Bundle:** كتبيع بياسة وحدة، الربح قليل. الكليان المغربي كيبغي 1+1.")
-                solutions.append("زيد Bundle: 'خود 2، التانية بنص الثمن' ولا '1+1 فابور'. هادي كتطلع AOV ديالك من 200 لـ 350 DH.")
-
-            if q_reviews_lp == "إيه، كاين بزاف + تصاور":
-                score += 1
-            elif q_reviews_lp == "إيه، ولكن غير كتابة":
                 score += 0.5
-                problems.append("🟠 **Reviews ضعاف:** غير كتابة بلا تصاور، الكليان ما كيتيقش.")
-                solutions.append("زيد 5 Reviews بتصاور ديال مغاربة، سميات مغربية، مدن: كازا، الرباط، فاس. و فيديو واحد ديال كليان كيهضر.")
+                problems.append(f"🐢 **السرعة:** {load:.1f}s - ثقيلة. السبب هما التصاور اللي قلنا عليهم.")
+                solutions.append("صغر التصاور و حيد الفيديو الكبير من اللول. الصفحة خاصها تحل في أقل من 2s.")
             else:
-                problems.append("🚨 **ما كاينش Reviews:** 0 ثقة. الكليان كيسول: واش هادا نصاب ولا لا؟")
-                solutions.append("زيد Reviews دابا قبل ما تطلق أي إعلان. بلا Reviews، CPL غادي يطلع و CONF غادي يطيح.")
-
-            if q_form == "قصير - سميت + نمرة + مدينة فقط":
-                score += 1
-            elif q_form == "طويل - كيطلب بزاف ديال المعلومات":
-                problems.append("🚨 **الفورم طويل:** كتطلب بزاف، الكليان كيعيا و ما كيكملش.")
-                solutions.append("الفورم خاصو يكون غير: سميت + نمرة + مدينة. صافي. حيد الإيميل، حيد العنوان الكامل، حيد أي حاجة زايدة.")
-            else:
-                problems.append("🟠 **غير واتساب:** بزاف ديال الناس ما كيبغيوش يهضرو في واتساب، كيبغيو يعمرّو و يساليو.")
-                solutions.append("زيد فورم قصير + واتساب بجوج. الفورم كيجيب Leads أكثر.")
-
-            if q_upsell == "إيه، كاين Upsell" and q_cross == "إيه، كاين":
-                score += 1
-            elif q_upsell == "إيه، كاين Upsell" or q_cross == "إيه، كاين":
+                problems.append(f"🚨 **السرعة كارثة:** {load:.1f}s - 70% غادي يخرجو قبل ما يشوفو المنتج.")
+                solutions.append("السيت ثقيل بزاف. بدل الثيم، صغر التصاور، حيد التطبيقات الزايدة.")
+            # --- فورم 1.5 ---
+            details.append(f"📝 **الفورم:** لقيت {nb_inputs} خانة")
+            if 1 <= nb_inputs <= 3:
+                score += 1.5
+                details.append("✅ الفورم قصير: سميت + نمرة + مدينة. هادا هو اللي كيبيع.")
+            elif nb_inputs > 3:
                 score += 0.5
-                problems.append("🟠 **Upsell / Cross-sell ناقص:** كتخلي الفلوس في الطابلة.")
-                solutions.append("ملي كيعمر الفورم، بان ليه: 'زيد واحد آخر بـ 99 DH فقط؟' + منتج صغير معاه. هادا كيزيد ليك 20-30% في المبيعات بلا إعلان زايد.")
+                problems.append(f"🚨 **الفورم طويل:** {nb_inputs} خانة! نتا كتطلب من الكليان يعمر بزاف، و هو كيعيا و كيحبس في النص.")
+                solutions.append("خلي غير 3: سميت + نمرة + مدينة. حيد الإيميل، حيد العنوان، حيد أي حاجة زايدة. كل خانة زايدة كتنقص ليك المبيعات.")
             else:
-                problems.append("🚨 **ما كاينش Upsell ولا Cross-sell:** كتبيع غير مرة وحدة و كتخلي الربح.")
-                solutions.append("زيد Upsell: بعد ما يعمر الفورم، صفحة: 'مبروك! بغيتي تزيد واحد آخر بنص الثمن؟' + Cross-sell: منتج كيكمل المنتج الأول.")
-
-            if q_colors == "متناسق - لون واحد + أبيض":
+                problems.append("🚨 **ما لقيتش فورم:** كيفاش غادي يشري؟")
+                solutions.append("زيد فورم قصير الفوق + واتساب.")
+            # --- ألوان 1 ---
+            details.append(f"🎨 **الألوان:** لقيت {nb_colors} لون: {', '.join(colors_unique[:5]) if colors_unique else 'غير أبيض و أسود'}")
+            if nb_colors <= 2:
                 score += 1
+                details.append("✅ الألوان متناسقين.")
+            elif nb_colors <= 4:
+                score += 0.5
+                problems.append(f"🟠 **الألوان بزاف شوية:** {nb_colors} ألوان، الصفحة كتبان مخربقة.")
+                solutions.append("خلي لون واحد + أبيض. حيد الألوان الزايدين.")
             else:
-                problems.append("🟠 **الألوان مخربقين:** الستور كيبان رخيص و ماشي محترف، الكليان ما كيتيقش.")
-                solutions.append("الستور اللي كيبيع في المغرب: أبيض + لون واحد (أخضر ولا أزرق ولا أسود). زر 'اطلب الآن' يكون لون واحد و كبير و كيبان في كل بلاصة. حيد الحمر و الصفر بزاف.")
-
-            if q_cod_text != "إيه، واضح":
-                problems.append("🚨 **الدفع عند التوصيل ما كاينش واضح:** هادي هي أول حاجة كيقلب عليها المغربي.")
-                solutions.append("كتب الفوق: 'الدفع عند التوصيل - ما تخلص حتى يوصلك' + 'التوصيل فابور اليوم'.")
-
-            if q_test_order == "ما جربتش":
-                problems.append("⚠️ **ما جربتيش تكموندي:** إلا نتا ما جربتيش، كيفاش غادي تعرف واش الفورم خدام؟")
-                solutions.append("دير Test Order دابا: عمر الفورم بنمرتك، شوف واش كيوصلك ميساج، واش كيوصلك إيميل، واش كيبان في Shopify / Dashboard. إلا ما وصلك والو، راه Leads كيمشيو و نتا ما عارفش.")
-            elif q_test_order == "جربت و تلاقيت مشكل":
-                problems.append("🚨 **Test Order فيه مشكل:** هادا أخطر مشكل - كتخلص على إعلانات و Leads كيضيعو.")
-                solutions.append("حبس الإعلانات حتى تصلح Test Order. جرب من تليفون آخر، من PC آخر، و من 4G ماشي WiFi.")
-
+                problems.append(f"🚨 **الألوان مخربقين:** {nb_colors} لون! الستور كيبان رخيص و ماشي محترف.")
+                solutions.append("الستور اللي كيبيع: أبيض + لون واحد. الزر يكون لون واحد في كل الصفحة.")
+            # --- ثقة + Upsell ---
+            if has_cod:
+                score += 0.25
+                details.append("💵 الدفع عند التوصيل: ✅ كاين.")
+            else:
+                problems.append("🚨 **الدفع عند التوصيل ما كاينش واضح:** أول حاجة كيقلب عليها المغربي.")
+                solutions.append("كتب الفوق: 'الدفع عند التوصيل - ما تخلص حتى يوصلك'.")
+            if has_free_ship:
+                score += 0.25
+                details.append("🚚 التوصيل فابور: ✅ كاين.")
+            else:
+                problems.append("🟠 **التوصيل فابور ما كاينش:** الكليان كيحسبو غالي.")
+                solutions.append("زيد 'التوصيل فابور' الفوق.")
+            if q_upsell3 == "إيه، داير" and q_cross3 == "إيه، داير":
+                score += 0.5
+            elif q_upsell3 == "إيه، داير" or q_cross3 == "إيه، داير":
+                score += 0.25
+                problems.append("🟠 **Upsell / Cross-sell ناقص:** داير واحد و خليتي واحد.")
+                solutions.append("زيد بجوج: بعد الفورم، 'زيد واحد آخر بنص الثمن؟' + منتج صغير معاه.")
+            else:
+                problems.append("🚨 **ما دايرش Upsell ولا Cross-sell:** كتخلي الفلوس في الطابلة.")
+                solutions.append("زيد Upsell بعد الفورم: 'مبروك! بغيتي تزيد واحد آخر بنص الثمن؟'")
+            if has_bundle:
+                details.append("🎁 Bundle: ✅ كاين.")
+            else:
+                problems.append("🟠 **ما كاينش Bundle:** كتبيع بياسة وحدة، الربح قليل.")
+                solutions.append("زيد 'خود 2، التانية بنص الثمن'. هادي كتطلع AOV من 200 لـ 350 DH.")
+            if has_video:
+                details.append("🎬 فيديو: ✅ كاين.")
+            else:
+                problems.append("🟠 **ما كاينش فيديو في الصفحة:** غير تصاور.")
+                solutions.append("زيد فيديو 30s ديال المنتج كيخدم، الفوق. الفيديو كيبيع كثر من 10 تصاور.")
+            st.divider()
             st.subheader(f"🏆 التقييم ديالك: {score:.1f} / 10")
             if score >= 8:
-                st.success(f"✅ **غادي يبيع! {score:.1f}/10** - الستور ديالك واجد. أطلق الإعلانات و سكيلي.")
+                st.success(f"✅ **غادي يبيع! {score:.1f}/10** - الستور واجد، أطلق و سكيلي.")
             elif score >= 5:
-                st.warning(f"⚠️ **غادي يبيع شوية و لكن كتضيع بزاف: {score:.1f}/10** - صلح المشاكل لتحت عاد أطلق، ولا غادي تخلص CPL غالي.")
+                st.warning(f"⚠️ **غادي يبيع شوية و لكن كتضيع بزاف: {score:.1f}/10** - صلح المشاكل لتحت عاد أطلق.")
             else:
-                st.error(f"🛑 **ما غاديش يبيع: {score:.1f}/10** - ما تطلقش إعلانات دابا، غادي تخسر فلوسك. صلح هادشي اللول.")
-
+                st.error(f"🛑 **ما غاديش يبيع: {score:.1f}/10** - ما تطلقش إعلانات دابا، غادي تخسر فلوسك.")
             st.divider()
-            st.subheader("🔍 المشاكل ديالك + الحلول")
+            st.subheader("👀 شنو لقيت ملي دخلت؟")
+            for d in details:
+                st.write(d)
+            st.divider()
+            st.subheader("🔍 فين غلطتي؟ - الشرح")
             for p in problems:
                 st.write(p)
-            st.subheader("🛠️ شنو تدير دابا؟")
+            st.subheader("🛠️ الحل ديال كل مشكل")
             for s in solutions:
                 st.write(f"- {s}")
-
-            st.divider()
-            st.write("**✅ Checklist ديال الصفحة اللي كتبيع في المغرب (COD):**")
-            st.write("1. الثمن الفوق + الدفع عند التوصيل + التوصيل فابور")
-            st.write("2. فيديو 30s ديال المنتج كيخدم")
-            st.write("3. 5 Reviews بتصاور مغاربة")
-            st.write("4. فورم قصير: سميت + نمرة + مدينة")
-            st.write("5. Bundle 1+1")
-            st.write("6. Upsell بعد الفورم")
-            st.write("7. سرعة أقل من 2s")
-            st.write("8. ألوان: أبيض + لون واحد")
+            if lp_screenshot:
+                st.divider()
+                st.subheader("📸 ملاحظة على السكرين اللي حطيتي")
+                st.write("شوف السكرين ديالك الفوق: إلا الثمن ما كيبانش في أول شاشة، طلعو. إلا الزر صغير ولا لونو مخبي، كبرو و ديرو لون واحد. إلا التصويرة اللولة عيانة ولا مظلمة، بدلها بوحدة واضحة و فيها المنتج كبير. التصويرة اللولة هي اللي كتقرر واش الكليان غادي يكمل ولا يخرج.")
