@@ -370,20 +370,141 @@ with tab4:
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
             st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين.")
 
-# ================= TAB 5 - محلل Landing Page - أوتوماتيك + تصاور + ترتيب الصفحة =================
+# ================= TAB 5 - JADID: حط التصاور كاملين في دقة وحدة + تحليل اللين =================
 with tab5:
-    st.subheader("🌐 حط اللين - أنا ندخل نشوف الستور، التصاور، و كيفاش حاط Landing Page")
-    st.write("أنا غادي ندخل، نجبد التصاور كاملين، نشوف شحال تقال، واش عيانين ولا مزيانين، و نشوف الترتيب ديال الصفحة: شنو حاط اللول و شنو حاط اللخر. ما غاديش نسولك والو من غير Upsell / Cross-sell.")
-    url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url3")
+    st.subheader("🌐 حط التصاور ديال Landing Page كاملين - نحكم عليهم كاملين في دقة وحدة")
+    st.write("حط 5 ولا 6 ولا 7 تصاور - ديال الصفحة كاملة من الفوق حتى لتحت - و غادي نقيسهم و نقول ليك فين غلطتي في كل تصويرة. زائد اللين ديال الستور باش نشوف السرعة و الترتيب.")
+
+    url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا (اختياري)", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url_new")
     st.write("### ❓ غير هاد الجوج اللي ما نقدرش نشوفهم من برا")
-    q_upsell3 = st.selectbox("1. واش داير Upsell؟ (ملي كيعمر الفورم، كيبان ليه زيد واحد آخر بنص الثمن؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_upsell3")
-    q_cross3 = st.selectbox("2. واش داير Cross-sell؟ (منتج آخر معاه؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_cross3")
-    st.write("### 📸 إلا بغيتي نشوف الديزاين بعينيا - حط سكرين ديال الصفحة هنا")
-    lp_screenshot = st.file_uploader("حط سكرينشوت ديال Landing Page ديالك (من التليفون)", type=["png", "jpg", "jpeg"], key="lp_shot")
-    if lp_screenshot:
-        st.image(lp_screenshot, caption="هادي هي الصفحة اللي غادي نقيمها", width=350)
-        st.info("✅ واخا، ملي تحط السكرين، شوفها بعينيك: إلا الثمن ما كيبانش في أول شاشة، طلعو. إلا الزر صغير، كبرو. إلا التصويرة اللولة مظلمة، بدلها.")
-    if st.button("🤖 دخل شوف الستور ديالي و قيمو ليا - تصاور + ترتيب + كلشي", type="primary", key="btn_lp3"):
+    q_upsell_n = st.selectbox("1. واش داير Upsell؟ (ملي كيعمر الفورم، كيبان ليه زيد واحد آخر بنص الثمن؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_upsell_new")
+    q_cross_n = st.selectbox("2. واش داير Cross-sell؟ (منتج آخر معاه؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_cross_new")
+
+    st.write("### 📸 حط التصاور كاملين هنا - في دقة وحدة")
+    st.write("كليكي على الزر و ختار التصاور كاملين: التصويرة اللولة، التانية، التالتة... كاملين")
+    lp_imgs = st.file_uploader(
+        "ختار التصاور كاملين ديال Landing Page (Ctrl + كليكي باش تختار بزاف)",
+        type=["png", "jpg", "jpeg", "webp"],
+        accept_multiple_files=True,
+        key="lp_imgs_all"
+    )
+
+    # --- PART 1: تحليل التصاور كاملين ---
+    if lp_imgs:
+        st.success(f"✅ واخا، وصلوني {len(lp_imgs)} تصاور. هاهوما كاملين:")
+        cols = st.columns(3)
+        for i, f in enumerate(lp_imgs):
+            with cols[i % 3]:
+                st.image(f, caption=f"تصويرة {i+1} - {f.name}", use_container_width=True)
+
+        if st.button("🤖 حكم على التصاور كاملين دابا", type="primary", key="btn_imgs_all"):
+            from PIL import Image
+            import io
+            import numpy as np
+            st.divider()
+            st.subheader(f"🏆 تحليل {len(lp_imgs)} تصاور ديالك - وحدة بوحدة")
+            total_score = 0
+            for i, f in enumerate(lp_imgs):
+                st.divider()
+                st.subheader(f"🖼️ التصويرة {i+1} - {f.name}")
+                try:
+                    bytes_data = f.getvalue()
+                    size_kb = len(bytes_data) / 1024
+                    img = Image.open(io.BytesIO(bytes_data)).convert("RGB")
+                    w, h = img.size
+                    ratio = w / h if h > 0 else 0
+                    gray = img.convert("L")
+                    arr = np.array(gray)
+                    brightness = arr.mean()
+                    contrast = arr.std()
+                except Exception as e:
+                    st.error(f"ما قدرتش نقرا هاد التصويرة: {e}")
+                    continue
+                st.image(f, width=300)
+                st.write(f"**الحجم:** {w} x {h} | **الوزن:** {size_kb:.0f} KB | **السطوع:** {brightness:.0f} / 255 | **التباين:** {contrast:.0f}")
+                score_img = 0
+                probs = []
+                sols = []
+                if size_kb > 400:
+                    probs.append(f"🚨 **هاد التصويرة تقيلة بزاف: {size_kb:.0f} KB** - هادي هي اللي مثقلة الستور ديالك و مخلياه يحل ببطء. الكليان كيخرج قبل ما يشوفها.")
+                    sols.append(f"صغر هاد التصويرة لـ أقل من 200KB. سير لـ tinypng.com، حطها، و عاود طلعها. غادي توفر {size_kb-150:.0f} KB غير من هادي.")
+                elif size_kb > 200:
+                    score_img += 0.5
+                    probs.append(f"🟠 **هاد التصويرة شوية تقيلة: {size_kb:.0f} KB** - ماشي كارثة، ولكن تقدر تصغرها.")
+                    sols.append("صغرها لـ أقل من 200KB باش الصفحة تحل في 2s.")
+                else:
+                    score_img += 1
+                    st.write(f"✅ **الوزن مزيان:** {size_kb:.0f} KB - خفيفة و غادي تحل دغيا.")
+                if brightness < 70:
+                    probs.append(f"🚨 **هاد التصويرة مظلمة بزاف: سطوع {brightness:.0f}/255** - المنتج ما كيبانش، الكليان كيشوف كحلة و كيدوز. هادي هي أول حاجة كتقتل البيع.")
+                    sols.append("هاد التصويرة خاصها تبدل. صور في الضو الطبيعي، حدا الشرجم، ماشي في الليل و ماشي بفلاش. المنتج خاصو يبان واضح و كبير.")
+                elif brightness < 110:
+                    score_img += 0.5
+                    probs.append(f"🟠 **هاد التصويرة شوية مظلمة: سطوع {brightness:.0f}** - المنتج كيبان ولكن ماشي واضح 100%.")
+                    sols.append("زيد ليها شوية ضو. صورها في النهار، و حط المنتج في بلاصة بيضة.")
+                else:
+                    score_img += 1
+                    st.write(f"✅ **الضو مزيان:** سطوع {brightness:.0f} - التصويرة واضحة و المنتج كيبان.")
+                if contrast < 30:
+                    probs.append(f"🚨 **هاد التصويرة باهتة: تباين {contrast:.0f}** - الألوان كاملين بحال بحال، الكتابة ما كتبانش، المنتج ما كيبانش. كتبان رخيصة.")
+                    sols.append("هاد التصويرة ما كتبيعش. خاصك تصويرة فيها تباين: منتج واضح + خلفية بيضة + كتابة كبيرة. حيد الفيلترات.")
+                else:
+                    score_img += 0.5
+                    st.write(f"✅ **التباين مزيان:** {contrast:.0f} - الكتابة و المنتج كيبانو.")
+                if w < 800:
+                    probs.append(f"🚨 **هاد التصويرة صغيرة بزاف: {w}x{h}** - في التليفون غادي تبان مبكسلة و عيانة، الكليان غادي يحس أن الستور ماشي محترف.")
+                    sols.append("التصويرة خاصها تكون على الأقل 1000px في العرض. عاود صورها بجودة عالية.")
+                elif ratio > 2.5 or ratio < 0.4:
+                    probs.append(f"🟠 **هاد التصويرة طويلة بزاف ولا عريضة بزاف: {w}x{h}** - في التليفون غادي تبان مخربقة.")
+                    sols.append("التصاور ديال Landing Page خاصهم يكونو مربعين ولا عموديين شوية، باش يبانو مزيان في التليفون.")
+                else:
+                    score_img += 0.5
+                    st.write(f"✅ **الأبعاد مزيانين:** {w}x{h} - غادي تبان مزيان في التليفون.")
+                if i == 0:
+                    st.write("**📌 هادي هي التصويرة اللولة - أهم تصويرة في الصفحة كاملة.**")
+                    st.write("التصويرة اللولة هي اللي كتقرر واش الكليان غادي يكمل ولا يخرج في 3 ثواني. خاصها تكون: المنتج كبير، واضح، في ضو مزيان، و الخلفية بيضة.")
+                    if brightness < 110 or size_kb > 300:
+                        probs.append("🚨 **التصويرة اللولة عيانة = الصفحة كاملة غادي تفشل.** 70% غادي يخرجو من هاد التصويرة.")
+                        sols.append("بدل التصويرة اللولة دابا. هي أهم حاجة. دير تصويرة ديال المنتج بوحدو، كبير، واضح، في ضو النهار.")
+                    else:
+                        st.write("✅ التصويرة اللولة مزيانة، كمل.")
+                elif i == 1:
+                    st.write("**📌 هادي التصويرة التانية - خاصها تكون المنتج كيخدم ولا قبل / بعد.**")
+                    st.write("إلا كانت نفس التصويرة اللولة، بدلها. الكليان بغا يشوف المنتج كيخدم، ماشي نفس التصويرة معاودة.")
+                elif i == len(lp_imgs)-1:
+                    st.write("**📌 هادي التصويرة اللخرة - خاصها تكون Reviews ولا زر الشراء.**")
+                    st.write("إلا كانت تصويرة عادية، زيد بلاصتها Reviews بتصاور ديال كليان.")
+                st.write(f"**تقييم هاد التصويرة: {score_img:.1f} / 3**")
+                for p in probs:
+                    st.write(p)
+                for s in sols:
+                    st.write(f"- الحل: {s}")
+                total_score += score_img
+            st.divider()
+            avg = total_score / len(lp_imgs) if len(lp_imgs) > 0 else 0
+            score_10 = (avg / 3) * 10
+            st.subheader(f"🏆 التقييم العام ديال التصاور: {score_10:.1f} / 10")
+            if score_10 >= 8:
+                st.success(f"✅ **التصاور واجدين يبيعو: {score_10:.1f}/10** - كمل، ما تبدل والو.")
+            elif score_10 >= 5:
+                st.warning(f"⚠️ **التصاور متوسطين: {score_10:.1f}/10** - كاينين تصاور عيانين كيقتلو البيع، بدلهم اللي قلت ليك الفوق.")
+            else:
+                st.error(f"🛑 **التصاور عيانين: {score_10:.1f}/10** - ما تطلقش إعلانات بهاد التصاور، غادي تخسر فلوسك. عاود صورهم في ضو النهار.")
+            st.divider()
+            st.subheader("📐 الترتيب الصحيح ديال Landing Page - كيفاش خاصك تحطهم؟")
+            st.write("**1. اللولة:** المنتج بوحدو، كبير، واضح، ضو مزيان")
+            st.write("**2. التانية:** المنتج كيخدم / قبل / بعد")
+            st.write("**3. التالتة:** العلبة + شنو فيها")
+            st.write("**4. الرابعة:** فيديو 30s ديال المنتج كيخدم")
+            st.write("**5. الخامسة:** Reviews بتصاور مغاربة")
+            st.write("**6. السادسة:** الثمن + Bundle + زر 'اطلب الآن'")
+            if q_upsell_n == "إيه، داير" and q_cross_n == "إيه، داير":
+                st.success("✅ Upsell + Cross-sell دايرهم، مزيان.")
+            else:
+                st.error("🚨 **ما دايرش Upsell / Cross-sell:** كتخلي الفلوس في الطابلة. زيد بعد الفورم: 'زيد واحد آخر بنص الثمن؟'")
+
+    # --- PART 2: تحليل اللين - السرعة + الترتيب + الفورم + الألوان (القديم ديالك، ما بدلتوش) ---
+    if st.button("🤖 دخل شوف الستور من اللين و قيمو ليا", type="primary", key="btn_lp_new"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
         else:
@@ -447,141 +568,135 @@ with tab5:
             problems = []
             solutions = []
             details = []
-            # --- التصاور 2.5 ---
-            details.append(f"🖼️ **التصاور: لقيت {nb_img} تصويرة في الصفحة**")
+            details.append(f"🖼️ **التصاور في السيت: لقيت {nb_img} تصويرة**")
             if nb_img == 0:
-                problems.append("🚨 **ما كاينش تصاور:** دخلت و ما لقيتش حتى تصويرة! كيفاش غادي يشري الكليان حاجة ما شافهاش؟")
-                solutions.append("الصفحة بلا تصاور = 0 مبيعات. حط 5 تصاور على الأقل: تصويرة كبيرة ديال المنتج، تصويرة كيخدم، تصويرة قبل / بعد، تصويرة ديال العلبة، تصويرة ديال كليان كيستعملو.")
+                problems.append("🚨 **ما كاينش تصاور:** دخلت و ما لقيتش حتى تصويرة!")
+                solutions.append("حط 5 تصاور على الأقل: المنتج، كيخدم، قبل / بعد، العلبة، كليان كيستعملو.")
             elif nb_img < 3:
                 score += 0.5
-                problems.append(f"🟠 **التصاور قلال بزاف:** غير {nb_img} تصاور. الكليان كيبغي يشوف المنتج من كل الجهات.")
-                solutions.append("زيد تصاور: المنتج بوحدو، المنتج في اليد، المنتج كيخدم، قبل / بعد، Reviews بتصاور. الصفحة اللي كتبيع فيها 5-7 تصاور.")
+                problems.append(f"🟠 **التصاور قلال بزاف:** غير {nb_img} تصاور.")
+                solutions.append("زيد تصاور: المنتج بوحدو، في اليد، كيخدم، قبل / بعد، Reviews بتصاور.")
             else:
                 score += 1
                 details.append(f"✅ عدد التصاور مزيان: {nb_img} تصاور.")
             if img_details:
                 details.append(f"⚖️ **وزن أول 5 تصاور:** " + " | ".join([f"{n} : {s:.0f}KB" for n, s in img_details]))
             if heavy_imgs > 0:
-                problems.append(f"🚨 **التصاور تقال بزاف:** لقيت {heavy_imgs} تصويرة فوق 300KB. هادو هما اللي مثقلين الستور ديالك و مخليينو يحل في {load:.1f}s.")
-                solutions.append("صغر كل تصويرة لـ أقل من 200KB. سير لـ tinypng.com، حط التصاور ديالك، و عاود طلعهم. الصفحة غادي تحل في 2s و CPL غادي يطيح.")
+                problems.append(f"🚨 **التصاور تقال بزاف:** لقيت {heavy_imgs} تصويرة فوق 300KB. هادو هما اللي مثقلين الستور و مخليينو يحل في {load:.1f}s.")
+                solutions.append("صغر كل تصويرة لـ أقل من 200KB. سير لـ tinypng.com.")
             else:
                 if nb_img > 0:
                     score += 0.5
                     details.append("✅ وزن التصاور مزيان، ماشي تقال.")
             if imgs_no_alt > 0:
-                problems.append(f"🟠 **التصاور بلا وصف:** {imgs_no_alt} تصويرة بلا Alt. Google و Facebook ما كيفهموش شنو فيهم.")
-                solutions.append("في كل تصويرة، كتب شنو فيها: 'كريم المفاصل - العلبة'، ماشي 'IMG_1234'. هادا كيعاون Facebook يفهم المنتج.")
+                problems.append(f"🟠 **التصاور بلا وصف:** {imgs_no_alt} تصويرة بلا Alt.")
+                solutions.append("في كل تصويرة، كتب شنو فيها: 'كريم المفاصل - العلبة'، ماشي 'IMG_1234'.")
             else:
                 if nb_img > 0:
                     score += 0.5
             if not has_lazy and nb_img > 4:
-                problems.append("🟠 **التصاور كاملين كيتحملو دقة وحدة:** الصفحة كتحل و هي كتجيب 7 تصاور دقة وحدة، داكشي علاش ثقيلة.")
-                solutions.append("دير Lazy Loading: التصاور اللي لتحت ما يتحملوش حتى يسكرولي ليهم الكليان.")
+                problems.append("🟠 **التصاور كاملين كيتحملو دقة وحدة:** الصفحة ثقيلة.")
+                solutions.append("دير Lazy Loading.")
             else:
                 if nb_img > 0:
                     score += 0.5
-            # --- ترتيب 2 ---
             details.append(f"📐 **ترتيب الصفحة ديالك (شنو حاط اللول):** {order_str if order_str else 'ما لقيتش ترتيب واضح'}")
             if pos_price / total_len < 0.30:
                 score += 1
-                details.append("✅ الثمن حاطو الفوق، في أول الصفحة. مزيان، الكليان كيشوفو دغيا.")
+                details.append("✅ الثمن حاطو الفوق، في أول الصفحة.")
             elif has_price:
-                problems.append(f"🚨 **الثمن مخبي لتحت:** حاط الثمن في {pos_price/total_len*100:.0f}% من الصفحة، يعني الكليان خاصو يسكرولي بزاف باش يلقاه. 60% غادي يخرجو قبل ما يوصلولو.")
-                solutions.append("طلع الثمن الفوق، في أول شاشة، كبير و واضح، معاه 'الدفع عند التوصيل'. الكليان المغربي أول حاجة كيقلب عليها هي الثمن.")
+                problems.append(f"🚨 **الثمن مخبي لتحت:** حاط الثمن في {pos_price/total_len*100:.0f}% من الصفحة، 60% غادي يخرجو قبل ما يوصلولو.")
+                solutions.append("طلع الثمن الفوق، في أول شاشة، كبير و واضح، معاه 'الدفع عند التوصيل'.")
             else:
-                problems.append("🚨 **ما لقيتش الثمن في الصفحة:** كيفاش غادي يشري و هو ما عارفش الثمن؟")
+                problems.append("🚨 **ما لقيتش الثمن في الصفحة.**")
                 solutions.append("زيد الثمن الفوق، كبير، و معاه العرض.")
             if has_cta and has_price and pos_cta / total_len < 0.40:
                 score += 0.5
                 details.append("✅ زر الشراء حاطو الفوق، كيبان دغيا.")
             else:
-                problems.append("🟠 **زر الشراء مخبي لتحت:** الكليان كيشوف المنتج و ما كيلقاش فين يشري، كيخرج.")
-                solutions.append("دير زر 'اطلب الآن' في 3 بلايص: الفوق، في الوسط من بعد Reviews، و في اللخر. و يكون كبير و لون واحد.")
+                problems.append("🟠 **زر الشراء مخبي لتحت:** الكليان كيشوف المنتج و ما كيلقاش فين يشري.")
+                solutions.append("دير زر 'اطلب الآن' في 3 بلايص: الفوق، في الوسط من بعد Reviews، و في اللخر.")
             if has_reviews and pos_reviews < pos_form:
                 score += 0.5
-                details.append("✅ Reviews حاطهم قبل الفورم، هادا هو الصح. الكليان كيتيق عاد كيعمر.")
+                details.append("✅ Reviews حاطهم قبل الفورم، هادا هو الصح.")
             elif has_reviews:
-                problems.append("🟠 **Reviews حاطهم من بعد الفورم:** الكليان كيوصل للفورم و هو باقي ما تيقش، ما غاديش يعمر.")
-                solutions.append("طلع Reviews الفوق، قبل الفورم. الترتيب الصحيح: تصويرة + ثمن + فيديو + Reviews + فورم + زر.")
+                problems.append("🟠 **Reviews حاطهم من بعد الفورم:** الكليان كيوصل للفورم و هو باقي ما تيقش.")
+                solutions.append("طلع Reviews الفوق، قبل الفورم. الترتيب: تصويرة + ثمن + فيديو + Reviews + فورم + زر.")
             else:
                 problems.append("🚨 **ما كاينش Reviews في الصفحة:** 0 ثقة.")
-                solutions.append("زيد 5 Reviews بتصاور مغاربة قبل الفورم. بلا Reviews، الكليان ما كيتيقش و ما كيعمّرش.")
-            # --- سرعة 1.5 ---
+                solutions.append("زيد 5 Reviews بتصاور مغاربة قبل الفورم.")
             details.append(f"⚡ **السرعة: {load:.1f}s | الحجم: {size_kb:.0f} KB**")
             if load <= 2:
                 score += 1.5
                 details.append("✅ السرعة مزيانة.")
             elif load <= 3.5:
                 score += 0.5
-                problems.append(f"🐢 **السرعة:** {load:.1f}s - ثقيلة. السبب هما التصاور اللي قلنا عليهم.")
+                problems.append(f"🐢 **السرعة:** {load:.1f}s - ثقيلة.")
                 solutions.append("صغر التصاور و حيد الفيديو الكبير من اللول. الصفحة خاصها تحل في أقل من 2s.")
             else:
                 problems.append(f"🚨 **السرعة كارثة:** {load:.1f}s - 70% غادي يخرجو قبل ما يشوفو المنتج.")
                 solutions.append("السيت ثقيل بزاف. بدل الثيم، صغر التصاور، حيد التطبيقات الزايدة.")
-            # --- فورم 1.5 ---
             details.append(f"📝 **الفورم:** لقيت {nb_inputs} خانة")
             if 1 <= nb_inputs <= 3:
                 score += 1.5
-                details.append("✅ الفورم قصير: سميت + نمرة + مدينة. هادا هو اللي كيبيع.")
+                details.append("✅ الفورم قصير: سميت + نمرة + مدينة.")
             elif nb_inputs > 3:
                 score += 0.5
-                problems.append(f"🚨 **الفورم طويل:** {nb_inputs} خانة! نتا كتطلب من الكليان يعمر بزاف، و هو كيعيا و كيحبس في النص.")
-                solutions.append("خلي غير 3: سميت + نمرة + مدينة. حيد الإيميل، حيد العنوان، حيد أي حاجة زايدة. كل خانة زايدة كتنقص ليك المبيعات.")
+                problems.append(f"🚨 **الفورم طويل:** {nb_inputs} خانة! نتا كتطلب من الكليان يعمر بزاف.")
+                solutions.append("خلي غير 3: سميت + نمرة + مدينة. حيد الإيميل، حيد العنوان.")
             else:
                 problems.append("🚨 **ما لقيتش فورم:** كيفاش غادي يشري؟")
                 solutions.append("زيد فورم قصير الفوق + واتساب.")
-            # --- ألوان 1 ---
             details.append(f"🎨 **الألوان:** لقيت {nb_colors} لون: {', '.join(colors_unique[:5]) if colors_unique else 'غير أبيض و أسود'}")
             if nb_colors <= 2:
                 score += 1
                 details.append("✅ الألوان متناسقين.")
             elif nb_colors <= 4:
                 score += 0.5
-                problems.append(f"🟠 **الألوان بزاف شوية:** {nb_colors} ألوان، الصفحة كتبان مخربقة.")
+                problems.append(f"🟠 **الألوان بزاف شوية:** {nb_colors} ألوان.")
                 solutions.append("خلي لون واحد + أبيض. حيد الألوان الزايدين.")
             else:
-                problems.append(f"🚨 **الألوان مخربقين:** {nb_colors} لون! الستور كيبان رخيص و ماشي محترف.")
-                solutions.append("الستور اللي كيبيع: أبيض + لون واحد. الزر يكون لون واحد في كل الصفحة.")
-            # --- ثقة + Upsell ---
+                problems.append(f"🚨 **الألوان مخربقين:** {nb_colors} لون! الستور كيبان رخيص.")
+                solutions.append("الستور اللي كيبيع: أبيض + لون واحد. الزر يكون لون واحد.")
             if has_cod:
                 score += 0.25
                 details.append("💵 الدفع عند التوصيل: ✅ كاين.")
             else:
-                problems.append("🚨 **الدفع عند التوصيل ما كاينش واضح:** أول حاجة كيقلب عليها المغربي.")
+                problems.append("🚨 **الدفع عند التوصيل ما كاينش واضح.**")
                 solutions.append("كتب الفوق: 'الدفع عند التوصيل - ما تخلص حتى يوصلك'.")
             if has_free_ship:
                 score += 0.25
                 details.append("🚚 التوصيل فابور: ✅ كاين.")
             else:
-                problems.append("🟠 **التوصيل فابور ما كاينش:** الكليان كيحسبو غالي.")
+                problems.append("🟠 **التوصيل فابور ما كاينش.**")
                 solutions.append("زيد 'التوصيل فابور' الفوق.")
-            if q_upsell3 == "إيه، داير" and q_cross3 == "إيه، داير":
+            if q_upsell_n == "إيه، داير" and q_cross_n == "إيه، داير":
                 score += 0.5
-            elif q_upsell3 == "إيه، داير" or q_cross3 == "إيه، داير":
+            elif q_upsell_n == "إيه، داير" or q_cross_n == "إيه، داير":
                 score += 0.25
-                problems.append("🟠 **Upsell / Cross-sell ناقص:** داير واحد و خليتي واحد.")
+                problems.append("🟠 **Upsell / Cross-sell ناقص.**")
                 solutions.append("زيد بجوج: بعد الفورم، 'زيد واحد آخر بنص الثمن؟' + منتج صغير معاه.")
             else:
-                problems.append("🚨 **ما دايرش Upsell ولا Cross-sell:** كتخلي الفلوس في الطابلة.")
+                problems.append("🚨 **ما دايرش Upsell ولا Cross-sell.**")
                 solutions.append("زيد Upsell بعد الفورم: 'مبروك! بغيتي تزيد واحد آخر بنص الثمن؟'")
             if has_bundle:
                 details.append("🎁 Bundle: ✅ كاين.")
             else:
-                problems.append("🟠 **ما كاينش Bundle:** كتبيع بياسة وحدة، الربح قليل.")
-                solutions.append("زيد 'خود 2، التانية بنص الثمن'. هادي كتطلع AOV من 200 لـ 350 DH.")
+                problems.append("🟠 **ما كاينش Bundle.**")
+                solutions.append("زيد 'خود 2، التانية بنص الثمن'.")
             if has_video:
                 details.append("🎬 فيديو: ✅ كاين.")
             else:
-                problems.append("🟠 **ما كاينش فيديو في الصفحة:** غير تصاور.")
-                solutions.append("زيد فيديو 30s ديال المنتج كيخدم، الفوق. الفيديو كيبيع كثر من 10 تصاور.")
+                problems.append("🟠 **ما كاينش فيديو في الصفحة.**")
+                solutions.append("زيد فيديو 30s ديال المنتج كيخدم، الفوق.")
             st.divider()
-            st.subheader(f"🏆 التقييم ديالك: {score:.1f} / 10")
+            st.subheader(f"🏆 التقييم ديالك من اللين: {score:.1f} / 10")
             if score >= 8:
                 st.success(f"✅ **غادي يبيع! {score:.1f}/10** - الستور واجد، أطلق و سكيلي.")
             elif score >= 5:
                 st.warning(f"⚠️ **غادي يبيع شوية و لكن كتضيع بزاف: {score:.1f}/10** - صلح المشاكل لتحت عاد أطلق.")
             else:
-                st.error(f"🛑 **ما غاديش يبيع: {score:.1f}/10** - ما تطلقش إعلانات دابا، غادي تخسر فلوسك.")
+                st.error(f"🛑 **ما غاديش يبيع: {score:.1f}/10** - ما تطلقش إعلانات دابا.")
             st.divider()
             st.subheader("👀 شنو لقيت ملي دخلت؟")
             for d in details:
@@ -593,7 +708,3 @@ with tab5:
             st.subheader("🛠️ الحل ديال كل مشكل")
             for s in solutions:
                 st.write(f"- {s}")
-            if lp_screenshot:
-                st.divider()
-                st.subheader("📸 ملاحظة على السكرين اللي حطيتي")
-                st.write("شوف السكرين ديالك الفوق: إلا الثمن ما كيبانش في أول شاشة، طلعو. إلا الزر صغير ولا لونو مخبي، كبرو و ديرو لون واحد. إلا التصويرة اللولة عيانة ولا مظلمة، بدلها بوحدة واضحة و فيها المنتج كبير. التصويرة اللولة هي اللي كتقرر واش الكليان غادي يكمل ولا يخرج.")
