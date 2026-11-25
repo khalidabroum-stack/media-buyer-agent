@@ -5,7 +5,109 @@ st.set_page_config(page_title="Agent V11 - Expert Complet", page_icon="🤖", la
 st.title("🤖 Agent V11 - Expert Complet")
 st.write("الحملة + الفيديو + الكوبي + السكيلينغ - كلشي فبلاصة وحدة")
 
-tab1, tab2, tab3, tab4 = st.tabs(["📊 1. تحليل الحملة - SCALE or KILL", "🎬 2. تحليل الفيديو + Ad Copy", "🚀 3. بناء حملة بحال Expert", "🩺 4. محلل COD - CPL / CONF / DELIV"])
+tab0, tab1, tab2, tab3, tab4 = st.tabs(["🟢 0. ابدا هنا - واش أول مرة؟", "📊 1. تحليل الحملة - SCALE or KILL", "🎬 2. تحليل الفيديو + Ad Copy", "🚀 3. بناء حملة بحال Expert", "🩺 4. محلل COD - CPL / CONF / DELIV"])
+
+# ================= TAB 0 - جديد: ابدا هنا - Media Buyer + Marketer + Copywriter =================
+with tab0:
+    st.subheader("🟢 قبل ما تطلق أي حملة - جاوب هنا و نعطيك استراتيجية كاملة")
+    st.write("هادا هو الـ Media Buyer ديالك. جاوب بالصح، و غادي نعطيك شنو تدير من Campaign حتى لـ Ads، و شحال غادي يجيك CPL، و امتى تطفي.")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        first_time = st.selectbox("1. واش أول مرة تحل Ad Account؟", ["إيه، أول مرة", "لا، عندي واحد قديم و خدام", "لا، عندي واحد و لكن تبانا / تقيد"], key="t0_first")
+        produit0 = st.text_input("2. شنو المنتج؟", placeholder="مثال: كريم المفاصل", key="t0_prod")
+        probleme0 = st.text_input("3. شنو المشكل اللي كيحل؟", placeholder="مثال: ألم الركبة ملي كتنوض الصباح", key="t0_prob")
+        prix_vente0 = st.number_input("4. شحال ثمن البيع؟ (DH)", min_value=0.0, value=249.0, key="t0_prix")
+        prix_cout0 = st.number_input("5. شحال طايح عليك؟ منتج + توصيل (DH)", min_value=0.0, value=90.0, key="t0_cout")
+    with c2:
+        budget0 = st.number_input("6. شحال Budget ديال التيست؟ (DH في النهار)", min_value=0.0, value=150.0, key="t0_bud")
+        nb_videos0 = st.number_input("7. شحال عندك من فيديو؟", min_value=1, value=3, key="t0_vid")
+        target0 = st.selectbox("8. شكون Target ديالك؟", ["نساء 35-65", "رجال 35-65", "نساء 18-35", "رجال 18-35", "الأمهات", "رجال + نساء 35-65", "ما عرفتش"], key="t0_target")
+        page0 = st.selectbox("9. واش الصفحة واجدة ولا جديدة؟", ["جديدة - 0 متابع", "قديمة و فيها تفاعل", "قديمة و لكن ميتة"], key="t0_page")
+        ville0 = st.selectbox("10. فين غادي تبيع؟", ["المغرب كامل", "كازا + الرباط + طنجة فقط", "مدينة وحدة"], key="t0_ville")
+
+    if st.button("🤖 عطيني الاستراتيجية ديالي كاملة", type="primary", key="btn_t0"):
+        marge0 = prix_vente0 - prix_cout0
+        # تقدير CPL على حساب الثمن - المغرب COD
+        if prix_vente0 <= 180:
+            cpl_min, cpl_max, cpl_bad = 10, 18, 30
+        elif prix_vente0 <= 280:
+            cpl_min, cpl_max, cpl_bad = 12, 22, 45
+        else:
+            cpl_min, cpl_max, cpl_bad = 18, 32, 55
+
+        # Budget كافي ولا لا
+        st.divider()
+        st.subheader(f"📋 استراتيجية {produit0 if produit0 else 'المنتج ديالك'} - من Campaign حتى Ads")
+
+        if first_time == "إيه، أول مرة":
+            st.warning("⚠️ **أول مرة؟** ما تطلقش بـ Budget كبير. أول 3 أيام هي Warm-up. دير صفحة، دير 3 بوستات عاديين، و عاد أطلق بـ 150-200 DH/نهار. ما تديرش Pixel جديد و تسنا المبيعات في نفس النهار.")
+            st.write("**Checklist أول مرة:** 1) صفحة فيها تصويرة + غلاف + 3 بوستات 2) حساب إعلاني مربوط بالصفحة 3) طريقة خلاص خدامة 4) WhatsApp Business مربوط")
+        elif first_time == "لا، عندي واحد و لكن تبانا / تقيد":
+            st.error("🚨 **الحساب تبانا؟** ما تطلقش فيه نفس المنتج بنفس الفيديو. بدل الفيديو، بدل الصفحة، و سخن الحساب الجديد بـ 50 DH/نهار لمدة 2 أيام عاد أطلق الحملة الحقيقية.")
+        else:
+            st.success("✅ **حساب قديم و خدام:** مزيان، تقدر تطلق نيشان بـ Budget اللي قلتي.")
+
+        if page0 == "جديدة - 0 متابع":
+            st.write("**نصيحة الصفحة:** الصفحة الجديدة كتجيب CPL طالع شوية في الأول. زيد 3 بوستات ديال Reviews و فيديو ديال المنتج قبل ما تطلق، باش الناس ملي يدخلو يلقاو الثقة.")
+
+        st.write(f"**المارج ديالك:** {marge0:.0f} DH في البياسة. إلا بعتي بـ {prix_vente0:.0f} DH و CPL ديالك {cpl_min}-{cpl_max} DH، خاصك CONF + DELIV مزيانين باش تربح. سير لـ Tab 4 و حسبها.")
+        if marge0 < 80:
+            st.error(f"🚨 المارج قليل: {marge0:.0f} DH. بهاد الثمن صعيب تربح في COD. يا زيد الثمن لـ {prix_vente0+50:.0f} DH، يا دير Bundle 1+1، يا نقص ثمن الشراء.")
+        elif marge0 < 120:
+            st.warning(f"⚠️ المارج متوسط: {marge0:.0f} DH. خدم بـ Bundle باش تطلع AOV.")
+        else:
+            st.success(f"✅ المارج مزيان: {marge0:.0f} DH. تقدر تسكيلي.")
+
+        # هل Budget كافي؟
+        total_test = budget0 * 3
+        if total_test < 300:
+            st.error(f"🚨 Budget قليل: {budget0:.0f} DH/نهار × 3 أيام = {total_test:.0f} DH. هادا غير باش تعرف واش الفيديو خدام ولا لا، ماشي باش تبيع. إلا قدرتي، دير {budget0:.0f} × 3 أيام على الأقل = {budget0*3:.0f} DH، و الأفضل 450-600 DH للتيست.")
+        else:
+            st.success(f"✅ Budget التيست مزيان: {total_test:.0f} DH في 3 أيام. كافي باش تحكم.")
+
+        st.divider()
+        st.subheader("🏗️ STRUCTURE - كيفاش تبني الحملة في Ads Manager")
+        st.write("**Campaign:** Sales - Leads / WhatsApp - CBO ولا ABO")
+        st.write(f"**Ad Sets: 3** - كل Ad Set فيه فيديو واحد، Budget: {budget0/3:.0f} DH / Ad Set إلا كنتي ABO، ولا {budget0:.0f} DH كاملة إلا كنتي CBO")
+        st.write(f"**Target:** {target0} | {ville0} | Broad - بلا اهتمامات ضيقة، خلي Facebook يقلب")
+        st.write("**Placement:** Advantage+ - Facebook + Instagram + Reels")
+        st.write("")
+        st.write("**Ad Set 1 - زاوية الألم:** 'كتعاني من ...؟'")
+        st.write("**Ad Set 2 - زاوية الحياة اليومية:** 'ما بقيتيش كتقدر تمشى / تنعس / تخدم؟'")
+        st.write("**Ad Set 3 - زاوية العرض:** 'توصيل فابور اليوم فقط + الدفع عند التوصيل'")
+        st.write("")
+        st.write(f"**Ads:** {nb_videos0} فيديوهات. إلا عندك أقل من 3، دير نفس الفيديو بـ 3 Hooks مختلفين في أول 3 ثواني.")
+
+        st.divider()
+        st.subheader("🎯 CPL المتوقع + امتى نطفي و امتى نسكيلي؟")
+        st.write(f"**إلا مشات مزيان:** CPL بين **{cpl_min} DH و {cpl_max} DH** - كمل و سكيلي +20% كل يومين.")
+        st.write(f"**إلا مشات متوسطة:** CPL بين **{cpl_max+1} DH و {cpl_bad-5} DH** - خليه يكمل نهار آخر، بدل غير Hook.")
+        st.write(f"**إلا مشات عيانة:** CPL فوق **{cpl_bad} DH** لمدة يومين = طفي.")
+        st.write("")
+        st.write("**القاعدة الذهبية ديال الطفي - حفضها:**")
+        st.write(f"- صرفتي 50 DH و 0 Lead = طفي الـ Ad Set، المشكل في Hook")
+        st.write(f"- صرفتي 100 DH و CTR أقل من 1% = المشكل في الفيديو / CTA")
+        st.write(f"- صرفتي {budget0:.0f} DH و جبتي Leads و 0 تأكيد = المشكل في Call Center / Offer، ماشي في الإعلان")
+        st.write(f"- CPL > {cpl_bad} DH لمدة 2 أيام = طفي الحملة كاملة و بدا وحدة جديدة")
+        st.write(f"- CPL < {cpl_max} DH + Lead Rate > 10% = سكيلي: {budget0:.0f} -> {budget0*1.2:.0f} -> {budget0*1.44:.0f} DH")
+
+        st.divider()
+        st.subheader("✍️ Copywriter - الكوبي واجد، كوبيه نيشان")
+        st.code(f"""كتعاني من {probleme0 if probleme0 else 'المشكل ديالك'}؟ 😩
+
+جربتي بزاف و والو؟
+
+{produit0 if produit0 else 'المنتج'} كيعاونك ترجع تتحرك مرتاح، و أكثر من 500 واحد في المغرب جربوه.
+
+✅ النتيجة كتبان في أيام قليلة
+✅ التوصيل فابور اليوم فقط
+✅ الدفع عند التوصيل - ما تخلص حتى يوصلك
+
+👉 كليكي على الزر دابا و طلبي، العرض كيسالي اليوم!
+الثمن: {prix_vente0:.0f} DH فقط""", language="text")
+        st.write("**ممنوع في Meta:** 'كيحيد الألم نهائيا' / 'علاج سحري' / 'مضمون 100%'. هادو كيجيبو Ban. دير 'كيعاون' / 'كيساعد' / 'كيخفف'.")
+        st.write("**Hook للفيديو (أول 3 ثواني):** 'واش الركبة كتضرك ملي تنوض الصباح؟ شوف هادي...' + وري المشكل في الكاميرا، ماشي 'سلام عليكم اليوم جبت ليكم...'")
 
 # ================= TAB 1 - تحليل الحملة =================
 with tab1:
@@ -382,3 +484,4 @@ with tab4:
         # إلا كلشي مزيان
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
             st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين، و ما تبدل والو.")
+            
