@@ -3,6 +3,8 @@ import pandas as pd
 import requests
 from PIL import Image
 import pytesseract
+import numpy as np
+import io
 
 st.set_page_config(page_title="Agent V11 - Expert Complet", page_icon="🤖", layout="wide")
 st.title("🤖 Agent V11 - Expert Complet")
@@ -375,7 +377,7 @@ with tab4:
 # ================= TAB 5 =================
 with tab5:
     st.subheader("🌐 حط التصاور ديال Landing Page كاملين - نحكم عليهم كاملين في دقة وحدة")
-    st.write("حط 5 ولا 6 ولا 7 تصاور - ديال الصفحة كاملة من الفوق حتى لتحت - و غادي نقيسهم و نقول ليك فين غلطتي في كل تصويرة. زائد اللين ديال الستور باش نشوف السرعة و الترتيب.")
+    st.write("حط 5 ولا 6 ولا 7 تصاور - ديال الصفحة كاملة من الفوق حتى لتحت - و غادي نقيسهم + نقرا شنو مكتوب فيهم بالـ OCR و نقول ليك فين غلطتي في كل تصويرة. زائد اللين ديال الستور باش نشوف السرعة و الترتيب.")
     url_site = st.text_input("🔗 حط اللين ديال الستور ديالك هنا (اختياري)", placeholder="مثال: https://mon-store.com/products/creme", key="lp_url_new")
     st.write("### ❓ غير هاد الجوج اللي ما نقدرش نشوفهم من برا")
     q_upsell_n = st.selectbox("1. واش داير Upsell؟ (ملي كيعمر الفورم، كيبان ليه زيد واحد آخر بنص الثمن؟)", ["لا، ما دايرش", "إيه، داير"], key="lp_upsell_new")
@@ -395,12 +397,10 @@ with tab5:
             with cols[i % 3]:
                 st.image(f, caption=f"تصويرة {i+1} - {f.name}", use_container_width=True)
         if st.button("🤖 حكم على التصاور كاملين دابا", type="primary", key="btn_imgs_all"):
-            from PIL import Image
-            import io
-            import numpy as np
             st.divider()
-            st.subheader(f"🏆 تحليل {len(lp_imgs)} تصاور ديالك - وحدة بوحدة")
+            st.subheader(f"🏆 تحليل {len(lp_imgs)} تصاور ديالك - وحدة بوحدة + OCR")
             total_score = 0
+            all_text = ""
             for i, f in enumerate(lp_imgs):
                 st.divider()
                 st.subheader(f"🖼️ التصويرة {i+1} - {f.name}")
@@ -419,6 +419,21 @@ with tab5:
                     continue
                 st.image(f, width=300)
                 st.write(f"**الحجم:** {w} x {h} | **الوزن:** {size_kb:.0f} KB | **السطوع:** {brightness:.0f} / 255 | **التباين:** {contrast:.0f}")
+                ocr_text = ""
+                try:
+                    ocr_text = pytesseract.image_to_string(img, lang="ara+fra+eng")
+                except Exception:
+                    try:
+                        ocr_text = pytesseract.image_to_string(img, lang="eng+fra")
+                    except Exception:
+                        ocr_text = ""
+                ocr_text_clean = ocr_text.strip()
+                all_text += " " + ocr_text_clean
+                if ocr_text_clean:
+                    st.write("**🔤 شنو لقيت مكتوب في هاد التصويرة (OCR):**")
+                    st.info(ocr_text_clean[:800])
+                else:
+                    st.warning("⚠️ **ما لقيتش حتى كلمة في هاد التصويرة** - يعني تصويرة بلا كتابة. الكليان ما غاديش يفهم شنو كتبيع.")
                 score_img = 0
                 probs = []
                 sols = []
@@ -457,21 +472,36 @@ with tab5:
                 else:
                     score_img += 0.5
                     st.write(f"✅ **الأبعاد مزيانين:** {w}x{h} - غادي تبان مزيان في التليفون.")
+                txt_low = ocr_text_clean.lower()
                 if i == 0:
                     st.write("**📌 هادي هي التصويرة اللولة - أهم تصويرة في الصفحة كاملة.**")
                     st.write("التصويرة اللولة هي اللي كتقرر واش الكليان غادي يكمل ولا يخرج في 3 ثواني. خاصها تكون: المنتج كبير، واضح، في ضو مزيان، و الخلفية بيضة.")
+                    if "dh" in txt_low or "درهم" in txt_low or "د.م" in txt_low or "mad" in txt_low:
+                        st.write("✅ **الثمن كاين في التصويرة اللولة** - مزيان.")
+                        score_img += 0.5
+                    else:
+                        probs.append("🚨 **التصويرة اللولة ما فيهاش الثمن** - الكليان ما كيعرفش شحال غادي يخلص.")
+                        sols.append("زيد الثمن في التصويرة اللولة، كبير و واضح.")
+                    if any(x in txt_low for x in ["اطلب", "اشتر", "command", "acheter", "order", "buy"]):
+                        st.write("✅ **CTA كاين في التصويرة اللولة**")
+                        score_img += 0.5
+                    else:
+                        probs.append("🟠 **التصويرة اللولة ما فيهاش CTA** - ما كاينش 'اطلب الآن'")
+                        sols.append("زيد في التصويرة اللولة: 'اطلب الآن' ولا 'الدفع عند التوصيل'.")
                     if brightness < 110 or size_kb > 300:
                         probs.append("🚨 **التصويرة اللولة عيانة = الصفحة كاملة غادي تفشل.** 70% غادي يخرجو من هاد التصويرة.")
                         sols.append("بدل التصويرة اللولة دابا. هي أهم حاجة. دير تصويرة ديال المنتج بوحدو، كبير، واضح، في ضو النهار.")
-                    else:
-                        st.write("✅ التصويرة اللولة مزيانة، كمل.")
                 elif i == 1:
                     st.write("**📌 هادي التصويرة التانية - خاصها تكون المنتج كيخدم ولا قبل / بعد.**")
                     st.write("إلا كانت نفس التصويرة اللولة، بدلها. الكليان بغا يشوف المنتج كيخدم، ماشي نفس التصويرة معاودة.")
                 elif i == len(lp_imgs)-1:
                     st.write("**📌 هادي التصويرة اللخرة - خاصها تكون Reviews ولا زر الشراء.**")
                     st.write("إلا كانت تصويرة عادية، زيد بلاصتها Reviews بتصاور ديال كليان.")
-                st.write(f"**تقييم هاد التصويرة: {score_img:.1f} / 3**")
+                if any(x in txt_low for x in ["الدفع عند التوصيل", "cash on delivery", "paiement"]):
+                    st.write("✅ **الدفع عند التوصيل كاين مكتوب**")
+                if any(x in txt_low for x in ["فابور", "gratuit", "free", "مجاني"]):
+                    st.write("✅ **التوصيل فابور كاين مكتوب**")
+                st.write(f"**تقييم هاد التصويرة: {score_img:.1f} / 3.5**")
                 for p in probs:
                     st.write(p)
                 for s in sols:
@@ -479,7 +509,7 @@ with tab5:
                 total_score += score_img
             st.divider()
             avg = total_score / len(lp_imgs) if len(lp_imgs) > 0 else 0
-            score_10 = (avg / 3) * 10
+            score_10 = (avg / 3.5) * 10
             st.subheader(f"🏆 التقييم العام ديال التصاور: {score_10:.1f} / 10")
             if score_10 >= 8:
                 st.success(f"✅ **التصاور واجدين يبيعو: {score_10:.1f}/10** - كمل، ما تبدل والو.")
@@ -487,6 +517,19 @@ with tab5:
                 st.warning(f"⚠️ **التصاور متوسطين: {score_10:.1f}/10** - كاينين تصاور عيانين كيقتلو البيع، بدلهم اللي قلت ليك الفوق.")
             else:
                 st.error(f"🛑 **التصاور عيانين: {score_10:.1f}/10** - ما تطلقش إعلانات بهاد التصاور، غادي تخسر فلوسك. عاود صورهم في ضو النهار.")
+            st.divider()
+            st.subheader("🔤 النص الكامل اللي لقيت في التصاور كاملين (OCR):")
+            if all_text.strip():
+                st.code(all_text.strip()[:2000], language="text")
+                low_all = all_text.lower()
+                if "dh" not in low_all and "درهم" not in low_all and "mad" not in low_all:
+                    st.error("🚨 **ما لقيتش الثمن في حتى تصويرة!** - الكليان غادي يخرج. زيد الثمن في التصويرة اللولة.")
+                if not any(x in low_all for x in ["اطلب", "اشتر", "command", "order", "buy"]):
+                    st.error("🚨 **ما لقيتش CTA في حتى تصويرة!** - زيد 'اطلب الآن' في التصويرة اللولة و اللخرة.")
+                if not any(x in low_all for x in ["الدفع عند التوصيل", "cash", "paiement"]):
+                    st.warning("⚠️ **ما لقيتش 'الدفع عند التوصيل' مكتوب في التصاور.** زيدو، حيت هو اللي كيخلي المغاربة يشريو.")
+            else:
+                st.error("🚨 **التصاور كاملين بلا كتابة!** - خاصك تزيد كتابة في التصاور: الثمن + CTA + الدفع عند التوصيل.")
             st.divider()
             st.subheader("📐 الترتيب الصحيح ديال Landing Page - كيفاش خاصك تحطهم؟")
             st.write("**1. اللولة:** المنتج بوحدو، كبير، واضح، ضو مزيان")
@@ -556,10 +599,6 @@ with tab5:
             has_reviews = pos_reviews < 999999999
             has_video = pos_video < 999999999
             has_bundle = any(x in html_low for x in ["1+1", "2+1", "bundle", "pack"])
-            # ===== 🎨 الألوان - مصحح: ما كنحسبوش ألوان التصاور =====
-            # الغلط القديم: كان كيحسب كاع الألوان في HTML، و كيقول 25 لون = مخربق
-            # الصحيح: اللاندينغ ديالك كاملة تصاور، يعني الألوان اللي كيشوف الكليان هما ديال التصاور
-            # داكشي علاش نحسبو غير ألوان الزر و الفورم، و إلا كانت لاندينغ تصاور ما نعاقبوش عليها
             total_text_len = len(html_low.strip())
             is_image_landing = (nb_img >= 4 and total_text_len < 50000) or nb_img > 8
             buttons_html = re.findall(r'<button.*?</button>', html_low, flags=re.DOTALL)
@@ -651,7 +690,6 @@ with tab5:
             else:
                 problems.append("🚨 **ما لقيتش فورم:** كيفاش غادي يشري؟")
                 solutions.append("زيد فورم قصير الفوق + واتساب.")
-            # ===== التقييم ديال الألوان - مصحح =====
             details.append(f"🎨 **ألوان الزر و الفورم فقط:** لقيت {nb_colors} لون: {', '.join(colors_unique[:5]) if colors_unique else 'غير أبيض و أسود'}")
             if is_image_landing:
                 details.append(f"✅ هادي لاندينغ تصاور ({nb_img} تصاور) - تجاهلنا ألوان التصاور، حسبنا غير ألوان الزر و الفورم")
