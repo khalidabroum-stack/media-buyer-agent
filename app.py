@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import requests
+from PIL import Image
+import pytesseract
 
 st.set_page_config(page_title="Agent V11 - Expert Complet", page_icon="🤖", layout="wide")
 st.title("🤖 Agent V11 - Expert Complet")
