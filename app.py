@@ -532,7 +532,7 @@ with tab5:
             else:
                 st.error("🚨 **ما دايرش Upsell / Cross-sell:** كتخلي الفلوس في الطابلة.")
 
-    # ===== FIX V12 - اللين كيشوف التصاور كاملين غير من اللين + GIF كيتحسب فيديو =====
+    # ===== FIX V13 - GIF = فيديو + السنتا بالمجان / الخلاص كتتحسب =====
     if st.button("🤖 دخل شوف الستور من اللين و قيمو ليا", type="primary", key="btn_lp_new"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
@@ -604,10 +604,11 @@ with tab5:
             # --- 4. الحساب على النص المدمج - ماشي غير HTML ---
             has_price = any(x in text_combined for x in ["dh", "درهم", "mad", "د.م", "249", "319", "399"])
             has_cta = any(x in text_combined for x in ["اطلب", "add to cart", "buy now", "commander", "acheter", "order", "اشتر"])
-            has_cod = any(x in text_combined for x in ["الدفع عند التوصيل", "cash on delivery", "paiement", "عند الاستلام"])
-            has_free_ship = any(x in text_combined for x in ["فابور", "free shipping", "gratuit", "مجاني", "livraison gratuite"])
+            # FIX V13 - السنتا: بالمجان + الخلاص حتى توصلك
+            has_cod = any(x in text_combined for x in ["الدفع عند التوصيل", "cash on delivery", "paiement", "عند الاستلام", "الخلاص حتى", "حتى توصلك", "الدفع عند الاستلام", "الخلاص عند الاستلام", "خلاص حتى"])
+            has_free_ship = any(x in text_combined for x in ["فابور", "free shipping", "gratuit", "مجاني", "مجان", "بالمجان", "توصيل بالمجان", "توصيل مجاني", "livraison gratuite"])
             has_reviews = any(x in text_combined for x in ["review", "avis", "تقييم", "رأي"])
-            # FIX: GIF كيتحسب فيديو - حيت كيتحرك بحال فيديو
+            # FIX V12 - GIF كيتحسب فيديو
             has_video = any(x in text_combined for x in ["<video", "youtube", ".mp4", ".gif", ".webp", "knee.gif"]) or "<video" in html_low or ".gif" in html_low or ".webp" in html_low
             has_gif = ".gif" in html_low or "knee.gif" in html_low
             has_bundle = any(x in text_combined for x in ["1+1", "2+1", "bundle", "pack", "علبتين", "3 علب", "2 علب", "319", "399"])
@@ -639,11 +640,9 @@ with tab5:
             else:
                 score += 1
                 details.append(f"✅ عدد التصاور مزيان: {nb_img} تصاور.")
-            # الثمن - من OCR ماشي غير HTML
             if has_price:
                 score += 1
                 details.append("✅ الثمن كاين - لقيتو في التصاور (OCR) ولا في الموقع.")
-                # إلا الثمن في التصويرة اللولة = ممتاز
                 first_ocr = all_ocr_text[:800].lower()
                 if any(x in first_ocr for x in ["dh", "درهم", "249", "319"]):
                     details.append("✅ الثمن كاين في التصويرة اللولة Hero - هادا هو الصح، الكليان كيشوفو دغيا.")
@@ -652,14 +651,12 @@ with tab5:
             else:
                 problems.append("🚨 **ما لقيتش الثمن لا في الموقع ولا في التصاور.**")
                 solutions.append("زيد الثمن في التصويرة اللولة، كبير و واضح.")
-            # CTA
             if has_cta:
                 score += 0.5
                 details.append("✅ زر الشراء / CTA كاين.")
             else:
                 problems.append("🟠 **زر الشراء مخبي ولا ما كاينش واضح.**")
                 solutions.append("دير زر 'اطلب الآن' في 3 بلايص: الفوق، في الوسط، و في اللخر.")
-            # Reviews - لا نعاقب إلا كان الستور تصاور و Reviews في تصويرة
             if has_reviews:
                 score += 0.5
                 details.append("✅ Reviews كاينين.")
@@ -714,13 +711,13 @@ with tab5:
                     solutions.append("الستور اللي كيبيع: أبيض + لون واحد.")
             if has_cod:
                 score += 0.25
-                details.append("💵 الدفع عند التوصيل: ✅ كاين.")
+                details.append("💵 الدفع عند التوصيل: ✅ كاين - لقيت 'الخلاص حتى توصلك السلعة' في السنتا.")
             else:
                 problems.append("🚨 **الدفع عند التوصيل ما كاينش واضح.**")
                 solutions.append("كتب الفوق: 'الدفع عند التوصيل - ما تخلص حتى يوصلك'.")
             if has_free_ship:
                 score += 0.25
-                details.append("🚚 التوصيل فابور: ✅ كاين.")
+                details.append("🚚 التوصيل فابور: ✅ كاين - لقيت 'توصيل بالمجان' في السنتا.")
             else:
                 problems.append("🟠 **التوصيل فابور ما كاينش.**")
                 solutions.append("زيد 'التوصيل فابور' الفوق.")
