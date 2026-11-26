@@ -532,7 +532,7 @@ with tab5:
             else:
                 st.error("🚨 **ما دايرش Upsell / Cross-sell:** كتخلي الفلوس في الطابلة.")
 
-    # ===== FIX V12: اللين كيشوف التصاور كاملين غير من اللين =====
+    # ===== FIX V12 - اللين كيشوف التصاور كاملين غير من اللين + GIF كيتحسب فيديو =====
     if st.button("🤖 دخل شوف الستور من اللين و قيمو ليا", type="primary", key="btn_lp_new"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
@@ -607,7 +607,9 @@ with tab5:
             has_cod = any(x in text_combined for x in ["الدفع عند التوصيل", "cash on delivery", "paiement", "عند الاستلام"])
             has_free_ship = any(x in text_combined for x in ["فابور", "free shipping", "gratuit", "مجاني", "livraison gratuite"])
             has_reviews = any(x in text_combined for x in ["review", "avis", "تقييم", "رأي"])
-            has_video = any(x in text_combined for x in ["<video", "youtube", ".mp4"]) or "<video" in html_low
+            # FIX: GIF كيتحسب فيديو - حيت كيتحرك بحال فيديو
+            has_video = any(x in text_combined for x in ["<video", "youtube", ".mp4", ".gif", ".webp", "knee.gif"]) or "<video" in html_low or ".gif" in html_low or ".webp" in html_low
+            has_gif = ".gif" in html_low or "knee.gif" in html_low
             has_bundle = any(x in text_combined for x in ["1+1", "2+1", "bundle", "pack", "علبتين", "3 علب", "2 علب", "319", "399"])
             # الفورم
             forms = re.findall(r'<form.*?</form>', html_low, flags=re.DOTALL)
@@ -738,7 +740,12 @@ with tab5:
                 problems.append("🟠 **ما كاينش Bundle.**")
                 solutions.append("زيد 'خود 2، التانية بنص الثمن'.")
             if has_video:
-                details.append("🎬 فيديو: ✅ كاين.")
+                if has_gif:
+                    details.append("🎬 فيديو / GIF: ✅ كاين - لقيت knee.gif كيتحرك.")
+                    score += 0.25
+                else:
+                    details.append("🎬 فيديو: ✅ كاين.")
+                    score += 0.25
             else:
                 problems.append("🟠 **ما كاينش فيديو في الصفحة.**")
                 solutions.append("زيد فيديو 30s ديال المنتج كيخدم، الفوق.")
