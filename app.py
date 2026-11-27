@@ -6,12 +6,15 @@ import pytesseract
 import numpy as np
 import io
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse, parse_qs, urljoin
+import re
+import time
 
 st.set_page_config(page_title="Agent V11 - Expert Complet", page_icon="🤖", layout="wide")
 st.title("🤖 Agent V11 - Expert Complet")
 st.write("الحملة + الفيديو + الكوبي + السكيلينغ - كلشي فبلاصة وحدة")
 
-tab0, tab1, tab2, tab4, tab5 = st.tabs(["🟢 0. ابدا هنا - واش أول مرة؟", "📊 1. تحليل الحملة - SCALE or KILL", "🎬 2. تحليل الفيديو + Ad Copy", "🩺 4. محلل COD - CPL / CONF / DELIV", "🌐 5. محلل Landing Page - واش غادي يبيع؟"])
+tab0, tab1, tab2, tab4, tab5, tab6 = st.tabs(["🟢 0. ابدا هنا - واش أول مرة؟", "📊 1. تحليل الحملة - SCALE or KILL", "🎬 2. تحليل الفيديو + Ad Copy", "🩺 4. محلل COD - CPL / CONF / DELIV", "🌐 5. محلل Landing Page - واش غادي يبيع؟", "🕵️ 6. Spy - حلل منافس"])
 
 # ================= TAB 0 =================
 with tab0:
@@ -531,14 +534,10 @@ with tab5:
                 st.success("✅ Upsell + Cross-sell دايرهم، مزيان.")
             else:
                 st.error("🚨 **ما دايرش Upsell / Cross-sell:** كتخلي الفلوس في الطابلة.")
-
-    # ===== FIX V13 - GIF = فيديو + السنتا بالمجان / الخلاص كتتحسب =====
     if st.button("🤖 دخل شوف الستور من اللين و قيمو ليا", type="primary", key="btn_lp_new"):
         if not url_site or "http" not in url_site:
             st.error("🚨 حط اللين كامل، خاص يبدا بـ https://")
         else:
-            import time, re
-            from urllib.parse import urljoin
             with st.spinner("⏳ دابا داخل للستور... كنجبد التصاور كاملين، كنقراهم بالـ OCR..."):
                 try:
                     t0 = time.time()
@@ -553,8 +552,6 @@ with tab5:
                     st.error(f"🚨 ما قدرتش ندخل للستور. الخطأ: {e}")
                     st.stop()
             st.success(f"✅ دخلت للستور: Status {status} | السرعة: {load:.1f}s | الحجم الكامل: {size_kb:.0f} KB")
-
-            # --- 1. جبد التصاور كاملين من اللين بالترتيب ---
             img_srcs = []
             for im in soup.find_all("img"):
                 src = im.get("src") or im.get("data-src") or im.get("data-lazy-src") or ""
@@ -568,8 +565,6 @@ with tab5:
                     img_srcs.append(src)
             img_srcs = img_srcs[:6]
             nb_img = len(img_srcs)
-
-            # --- 2. قرا التصاور بالـ OCR واحد بواحد ---
             st.subheader(f"🖼️ التصاور اللي لقيت في اللين - {nb_img} تصاور بالترتيب")
             all_ocr_text = ""
             for idx, src in enumerate(img_srcs):
@@ -594,29 +589,21 @@ with tab5:
                         st.warning(f"ما قدرتش نحمل تصويرة {idx+1}")
                 except Exception as e:
                     st.warning(f"ما قدرتش نقرا تصويرة {idx+1}: {e}")
-
-            # --- 3. دمج النص: HTML + OCR ديال التصاور ---
             text_combined = html_low + " " + all_ocr_text.lower()
             st.divider()
             st.subheader("🔤 النص الكامل اللي لقيت في اللين + التصاور (OCR):")
             st.code((all_ocr_text[:2000] if all_ocr_text.strip() else "ما لقيتش كتابة في التصاور - يمكن التصاور فيهم كتابة مزخرفة"), language="text")
-
-            # --- 4. الحساب على النص المدمج - ماشي غير HTML ---
             has_price = any(x in text_combined for x in ["dh", "درهم", "mad", "د.م", "249", "319", "399"])
             has_cta = any(x in text_combined for x in ["اطلب", "add to cart", "buy now", "commander", "acheter", "order", "اشتر"])
-            # FIX V13 - السنتا: بالمجان + الخلاص حتى توصلك
             has_cod = any(x in text_combined for x in ["الدفع عند التوصيل", "cash on delivery", "paiement", "عند الاستلام", "الخلاص حتى", "حتى توصلك", "الدفع عند الاستلام", "الخلاص عند الاستلام", "خلاص حتى"])
             has_free_ship = any(x in text_combined for x in ["فابور", "free shipping", "gratuit", "مجاني", "مجان", "بالمجان", "توصيل بالمجان", "توصيل مجاني", "livraison gratuite"])
             has_reviews = any(x in text_combined for x in ["review", "avis", "تقييم", "رأي"])
-            # FIX V12 - GIF كيتحسب فيديو
             has_video = any(x in text_combined for x in ["<video", "youtube", ".mp4", ".gif", ".webp", "knee.gif"]) or "<video" in html_low or ".gif" in html_low or ".webp" in html_low
             has_gif = ".gif" in html_low or "knee.gif" in html_low
             has_bundle = any(x in text_combined for x in ["1+1", "2+1", "bundle", "pack", "علبتين", "3 علب", "2 علب", "319", "399"])
-            # الفورم
             forms = re.findall(r'<form.*?</form>', html_low, flags=re.DOTALL)
             inputs = re.findall(r'<input[^>]*>', html_low)
             nb_inputs = len(inputs)
-            # الالوان غير من الزر والفورم
             buttons_html = re.findall(r'<button.*?</button>', html_low, flags=re.DOTALL)
             forms_html = re.findall(r'<form.*?</form>', html_low, flags=re.DOTALL)
             cta_html = " ".join(buttons_html + forms_html)
@@ -624,7 +611,6 @@ with tab5:
             colors_unique = list(set([c.lower() for c in colors_found if c.lower() not in ["#fff", "#ffffff", "#000", "#000000", "#f5f5f5", "#eeeeee", "#ddd", "#dddddd"]]))
             nb_colors = len(colors_unique)
             is_image_landing = nb_img >= 3
-
             score = 0
             problems = []
             solutions = []
@@ -765,3 +751,166 @@ with tab5:
             st.subheader("🛠️ الحل ديال كل مشكل")
             for s in solutions:
                 st.write(f"- {s}")
+
+# ================= TAB 6 - SPY =================
+with tab6:
+    st.subheader("🕵️ Spy - عطيني lien ديال منافس، نعطيك واش كيبيع ولا لا")
+    st.write("عطيه lien، هو كيحلل: واش جاي من إعلان Paid ولا لا، رقم الكامباين، و الترافيك التقريبي من SimilarWeb / Hypestat.")
+    st.warning("⚠️ هاد الأرقام تقديرية. حتى واحد ما يقدر يعرف المبيعات الحقيقية ديال سيت ديال شي واحد آخر.")
+
+    def spy_parse(raw):
+        raw = (raw or "").strip()
+        if not raw:
+            return None
+        if not raw.startswith("http"):
+            raw = "https://" + raw
+        try:
+            u = urlparse(raw)
+            qs = parse_qs(u.query)
+            def q(k):
+                v = qs.get(k)
+                return v[0] if v else ""
+            utm_source = q("utm_source")
+            utm_medium = q("utm_medium")
+            utm_campaign = q("utm_campaign")
+            fbclid = q("fbclid")
+            is_paid = ("paid" in utm_medium) or ("fb" in utm_source) or bool(fbclid)
+            domain = u.netloc.replace("www.", "")
+            product = " / ".join([p for p in u.path.split("/") if p]) or "الصفحة الرئيسية"
+            return {"domain": domain, "product": product, "is_paid": is_paid, "source": utm_source, "medium": utm_medium, "campaign": utm_campaign, "fbclid": bool(fbclid), "raw": raw}
+        except Exception:
+            return None
+
+    def spy_traffic(domain):
+        # Hypestat عبر proxy - إلا ما لقى والو = سيت صغير < 5000
+        try:
+            url = "https://api.allorigins.win/raw?url=" + requests.utils.quote("https://hypestat.com/info/" + domain)
+            r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+            html = r.text
+            m = re.search(r"Monthly Visits.*?([\d,\.]+K?)", html, flags=re.DOTALL)
+            if m and m.group(1) and m.group(1) != "0":
+                return m.group(1)
+        except Exception:
+            pass
+        return None
+
+    def spy_score(traffic, is_paid):
+        if not traffic:
+            return 1
+        return 3
+
+    mode = st.radio("شنو بغيتي تدير؟", ["🔍 حلل سيت واحد", "⚔️ قارن 3 سيتات"], horizontal=True, key="spy_mode")
+
+    if mode == "🔍 حلل سيت واحد":
+        spy_url = st.text_input("🔗 حط lien ديال المنافس هنا", placeholder="https://veloranatural.com/products/...", key="spy_single")
+        if st.button("🤖 حلل ليا هاد السيت", type="primary", key="btn_spy_single"):
+            info = spy_parse(spy_url)
+            if not info:
+                st.error("🚨 حط lien صحيح أ مولاي")
+            else:
+                with st.spinner("⏳ كنقلب في SimilarWeb / Hypestat..."):
+                    traffic = spy_traffic(info["domain"])
+                st.divider()
+                st.subheader("1. شنو عرفت من الـ Lien؟")
+                st.write(f"🌐 **الدومين:** {info['domain']}")
+                st.write(f"📦 **المنتج / الصفحة:** {info['product']}")
+                if info["is_paid"]:
+                    st.write(f"💰 **خدام بـ Paid Ads** - الزائر جاي من إعلان مخلص")
+                    st.write(f"📱 المصدر: **{info['source'] or 'Facebook'}** - الوسيلة: **{info['medium'] or 'paid'}**")
+                else:
+                    st.write("🌱 **Organic** - ماشي جاي من إعلان")
+                if info["campaign"]:
+                    st.write(f"🎯 **رقم الكامباين:** {info['campaign']}")
+                if info["fbclid"]:
+                    st.write("👁️ فيه **fbclid** = كليك جاي من Facebook")
+                st.subheader("2. فين تقلب بيديك؟")
+                st.markdown(f"🔍 [SimilarWeb - {info['domain']}](https://www.similarweb.com/website/{info['domain']}/) | 📊 [Hypestat](https://hypestat.com/info/{info['domain']}) | 📢 [Meta Ad Library MA](https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=MA&q={info['domain']}) | 📈 [Google Trends](https://trends.google.com/trends/explore?geo=MA&q={info['domain']})")
+                st.subheader("3. الترافيك التقريبي")
+                if traffic:
+                    st.write(f"تقريبا **{traffic} زيارة في الشهر** (تقدير، ماشي رقم رسمي)")
+                    st.success("🟢 **سيت خدام** - عندو ترافيك، قلب الإعلانات ديالو")
+                    st.write(f"تقدير المبيعات: الترافيك × 1% = عدد الطلبات تقريبا.")
+                else:
+                    st.write("ما كاين داتا في SimilarWeb / Hypestat = **أقل من 5,000 زيارة في الشهر**")
+                    st.warning("🟡 **باقي في مرحلة Test - صغير** - باقي ما نجحش")
+                    st.write("تقدير المبيعات: ~1,000 زائر × 1-2% = **10 حتى 20 طلب في الشهر**")
+                st.subheader("4. الخلاصة ديالي ليك")
+                st.write("✅ إلا الإعلان خدام من 2-3 سيمانات و ما حبسش = راه كيبيع")
+                st.write("❌ إلا غير إعلان واحد و Followers قلال = راه باقي كيجرب")
+                st.write("💡 ما تقلدش سيت صغير، قلب على Winner اللي عندو ترافيك كبير و إعلانات بزاف")
+
+    else:
+        st.write("حط 3 ديال الـ liens، و هو كيقارنهم و كيقول ليك شكون هو Winner")
+        c1 = st.text_input("لين السيت 1", key="spy_c1")
+        c2 = st.text_input("لين السيت 2", key="spy_c2")
+        c3 = st.text_input("لين السيت 3", key="spy_c3")
+        if st.button("⚔️ قارنهم ليا دابا", type="primary", key="btn_spy_compare"):
+            urls = [x for x in [c1, c2, c3] if x.strip()]
+            if len(urls) < 2:
+                st.error("🚨 صيفط على الأقل 2 ديال liens باش نقارن")
+            else:
+                datas = []
+                with st.spinner("⏳ كنقارن..."):
+                    for u_raw in urls:
+                        info = spy_parse(u_raw)
+                        if not info:
+                            continue
+                        traffic = spy_traffic(info["domain"])
+                        score = spy_score(traffic, info["is_paid"])
+                        datas.append({"info": info, "traffic": traffic, "score": score})
+                if not datas:
+                    st.error("🚨 liens ما خدامينش")
+                else:
+                    # Winner = أكبر سكور، إلا تعادلو، اللي عندو Paid يربح
+                    best_idx = 0
+                    best_score = -1
+                    for i, d in enumerate(datas):
+                        s = d["score"] + (1 if d["info"]["is_paid"] else 0)
+                        if s > best_score:
+                            best_score = s
+                            best_idx = i
+                    st.divider()
+                    st.subheader(f"⚔️ المقارنة بين {len(datas)} سيتات")
+                    rows = []
+                    for i, d in enumerate(datas):
+                        rows.append({
+                            "السيت": d["info"]["domain"],
+                            "المنتج": d["info"]["product"][:40],
+                            "الترافيك / شهر": d["traffic"] if d["traffic"] else "< 5,000",
+                            "إعلانات؟": "💰 Paid" if d["info"]["is_paid"] else "🌱 Organic",
+                            "النتيجة": "🏆 Winner" if i == best_idx else "—"
+                        })
+                    st.dataframe(pd.DataFrame(rows), use_container_width=True)
+                    st.success(f"🏆 **Winner هو: {datas[best_idx]['info']['domain']}**")
+                    if not datas[best_idx]["traffic"]:
+                        st.write("حتى Winner ما عندو ترافيك كبير - يعني هاد النيتش كامل باقي صغير، ولا المنافسين كاملين باقي كيجربو.")
+                    else:
+                        st.write(f"عندو ترافيك تقريبي **{datas[best_idx]['traffic']}** و خدام بـ Paid Ads.")
+                    st.write("**شنو تدير؟**")
+                    st.write("- خدم على المنتج ديال Winner، حيت هو اللي عندو أكبر ترافيك و إعلانات خدامين")
+                    st.write("- ما تقلدش السيت الصغير اللي ما عندو داتا")
+                    st.write("- شوف الإعلانات ديال Winner في Meta Ad Library و شوف شنو هو الـ Hook اللي خدام بيه")
+                    st.write("**روابط المقارنة:**")
+                    for d in datas:
+                        st.markdown(f"🔍 [SimilarWeb - {d['info']['domain']}](https://www.similarweb.com/website/{d['info']['domain']}/) | 📢 [Ads - {d['info']['domain']}](https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=MA&q={d['info']['domain']})")
+
+    st.divider()
+    st.subheader("🧮 حاسبة الربح - واش هاد المنتج ديال المنافس مربح؟")
+    pc1, pc2 = st.columns(2)
+    with pc1:
+        spy_sell = st.number_input("ثمن البيع (DH)", min_value=0.0, value=249.0, key="spy_sell")
+        spy_cost = st.number_input("ثمن السلعة + الشحن (DH)", min_value=0.0, value=90.0, key="spy_cost")
+    with pc2:
+        spy_ad = st.number_input("ثمن الإعلان للطلب الواحد (DH)", min_value=0.0, value=60.0, key="spy_ad")
+        spy_conf = st.number_input("نسبة التأكيد % (COD)", min_value=1.0, max_value=100.0, value=60.0, key="spy_conf")
+    ad_per_conf = spy_ad / (spy_conf / 100) if spy_conf > 0 else spy_ad
+    profit_spy = spy_sell - spy_cost - ad_per_conf
+    margin_spy = (profit_spy / spy_sell * 100) if spy_sell > 0 else 0
+    st.write(f"💰 **الربح في الطلب المؤكد: {profit_spy:.0f} DH** | 📊 نسبة الربح: **{margin_spy:.0f}%** | 📢 ثمن الإعلان الحقيقي للطلب المؤكد: **{ad_per_conf:.0f} DH**")
+    if profit_spy > 50:
+        st.success("✅ **مربح مزيان!** كمل فيه")
+    elif profit_spy > 0:
+        st.warning("🟡 **مربح شوية** - حاول تنقص ثمن الإعلان ولا تزيد الثمن")
+    else:
+        st.error("❌ **خاسر!** ما تخدمش على هاد المنتج بهاد الأثمنة")
+    st.write(f"إلا جبتي 100 طلب مؤكد في الشهر = ربح **{profit_spy*100:.0f} DH**")
