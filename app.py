@@ -410,7 +410,6 @@ with tab4:
                 st.write("**المشكل:** التوصيل كيتعطل بزاف. **الحل:** بدل شركة التوصيل. خاص يوصل في 1-2 أيام. **علاش؟** حيت كل نهار كيدوز، الكليان كيبرد و 50% ما غاديش يشدوه.")
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
             st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين.")
-        # ===== السكيلينغ - داخل COD نيشان =====
         st.divider()
         st.subheader("🚀 السكيلينغ - واش نسكيلي و شحال نزيد؟")
         if net < 0:
@@ -644,7 +643,9 @@ with tab5:
             has_cta = any(x in text_combined for x in ["اطلب", "add to cart", "buy now", "commander", "acheter", "order", "اشتر"])
             has_cod = any(x in text_combined for x in ["الدفع عند التوصيل", "cash on delivery", "paiement", "عند الاستلام", "الخلاص حتى", "حتى توصلك", "الدفع عند الاستلام", "الخلاص عند الاستلام", "خلاص حتى"])
             has_free_ship = any(x in text_combined for x in ["فابور", "free shipping", "gratuit", "مجاني", "مجان", "بالمجان", "توصيل بالمجان", "توصيل مجاني", "livraison gratuite"])
-            has_reviews = any(x in text_combined for x in ["review", "avis", "تقييم", "رأي"])
+            # === FIX REVIEWS - مكتوبين + بالصوت ===
+            has_reviews = any(x in text_combined for x in ["review", "avis", "تقييم", "رأي", "آراء", "اراء", "الزبناء", "قالو", "شنو قالو", "testimonial", "témoignage", "زبون", "زبناء", "customers"])
+            has_audio_reviews = any(x in text_combined for x in ["<audio", "audio.mp3", "audio-", ".mp3", "سمع آراء", "سمع", "écouter", "listen", "playaudio", "play_audio", "audio-btn", "audio-box"])
             has_video = any(x in text_combined for x in ["<video", "youtube", ".mp4", ".gif", ".webp", "knee.gif"]) or "<video" in html_low or ".gif" in html_low or ".webp" in html_low
             has_gif = ".gif" in html_low or "knee.gif" in html_low
             has_bundle = any(x in text_combined for x in ["1+1", "2+1", "bundle", "pack", "علبتين", "3 علب", "2 علب", "319", "399"])
@@ -690,12 +691,20 @@ with tab5:
             else:
                 problems.append("🟠 **زر الشراء مخبي ولا ما كاينش واضح.**")
                 solutions.append("دير زر 'اطلب الآن' في 3 بلايص: الفوق، في الوسط، و في اللخر.")
+            # === REVIEWS FIXED ===
             if has_reviews:
                 score += 0.5
                 details.append("✅ Reviews كاينين.")
+                if has_audio_reviews:
+                    details.append("🎧 Reviews بالصوت: ✅ كاينين - لقيت Audio في الستور.")
+            elif has_audio_reviews:
+                score += 0.25
+                details.append("🎧 Reviews بالصوت: ✅ كاينين - لقيت Audio.")
+                problems.append("🟠 **عندك Reviews بالصوت، ولكن ما كاينينش مكتوبين.**")
+                solutions.append("الـ Agent و Google ما كيسمعوش الصوت. زيد 5 Reviews مكتوبين بالنجمات ⭐⭐⭐⭐⭐ قبل الفورم، و خلي الأوديو معاهم.")
             else:
-                problems.append("🚨 **ما كاينش Reviews واضحين.**")
-                solutions.append("زيد 5 Reviews بتصاور مغاربة قبل الفورم.")
+                problems.append("🚨 **ما كاينش Reviews واضحين لا مكتوبين ولا بالصوت.**")
+                solutions.append("زيد 5 Reviews بتصاور مغاربة قبل الفورم + زيد Audio ديال الزبناء.")
             details.append(f"⚡ **السرعة: {load:.1f}s | الحجم: {size_kb:.0f} KB**")
             if load <= 2:
                 score += 1.5
@@ -779,6 +788,8 @@ with tab5:
             else:
                 problems.append("🟠 **ما كاينش فيديو في الصفحة.**")
                 solutions.append("زيد فيديو 30s ديال المنتج كيخدم، الفوق.")
+            if has_audio_reviews:
+                details.append("🎧 لقيت زر الأوديو ديال Reviews في الستور.")
             st.divider()
             st.subheader(f"🏆 التقييم ديالك من اللين: {score:.1f} / 10")
             if score >= 8:
