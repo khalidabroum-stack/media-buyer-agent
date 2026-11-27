@@ -14,7 +14,7 @@ st.set_page_config(page_title="Agent V11 - Expert Complet", page_icon="🤖", la
 st.title("🤖 Agent V11 - Expert Complet")
 st.write("الحملة + الفيديو + الكوبي + السكيلينغ - كلشي فبلاصة وحدة")
 
-tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["🟢 0. ابدا هنا", "📊 1. تحليل الحملة", "🎬 2. تحليل الفيديو", "✨ 3. مولد Hooks + واتساب", "🩺 4. محلل COD", "🌐 5. Landing Page", "🕵️ 6. Spy", "🚀 7. حاسبة السكيلينغ"])
+tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🟢 0. ابدا هنا", "📊 1. تحليل الحملة", "🎬 2. تحليل الفيديو", "✨ 3. مولد Hooks + واتساب", "🩺 4. محلل COD + سكيلينغ", "🌐 5. Landing Page", "🕵️ 6. Spy"])
 
 # ================= TAB 0 =================
 with tab0:
@@ -308,7 +308,7 @@ with tab2:
 👉 كليكي على اللين دابا و طلبي، العرض كيسالي اليوم!
 # {product}""", language="text")
 
-# ================= TAB 3 - JADID =================
+# ================= TAB 3 =================
 with tab3:
     st.subheader("✨ مولد Hooks + سكريبت واتساب - كوبي و خدم بيه")
     p3 = st.text_input("شنو المنتج؟", placeholder="مثال: كريم المفاصل", key="t3_prod")
@@ -340,9 +340,9 @@ with tab3:
         st.write("**ملي يقول غالي:** ما تنقصش الثمن! قول: الثمن فيه التوصيل، و الدفع عند التوصيل، و النتيجة كتبان في 7 أيام.")
         st.write("**ملي يقول نشاور و نرجع:** قول: نحجز ليك واحد؟ Stock كيسالي اليوم، و نعاود نعيط ليك من بعد 2 ساعات.")
 
-# ================= TAB 4 =================
+# ================= TAB 4 - COD + SCALING =================
 with tab4:
-    st.subheader("🩺 محلل COD - دخل النسب ديالك، نعطيك المشكل + الحل + علاش")
+    st.subheader("🩺 محلل COD + سكيلينغ - دخل النسب ديالك، نعطيك المشكل + الحل + شحال تسكيلي")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         cod_cpl = st.number_input("CPL - ثمن الليد (DH)", min_value=0.0, value=25.0, key="cod_cpl")
@@ -360,7 +360,8 @@ with tab4:
     q3 = st.selectbox("3. شنو كيوقع ملي كيوصل الكولي للكليان؟", ["ما كيشدوش التليفون", "كيقول ما عنديش فلوس", "كيقول ما بغيتوش", "كيشدو عادي"], key="cod_q3")
     q4 = st.selectbox("4. مناش كتعيط؟", ["نمرة عادية 06", "نمرة Fix", "واتساب فقط", "ما كنعيطش"], key="cod_q4")
     q5 = st.selectbox("5. شحال كيدير التوصيل باش يوصل؟", ["1-2 أيام", "3-4 أيام", "5 أيام و كثر"], key="cod_q5")
-    if st.button("🤖 حلل ليا COD - شنو هو المشكل؟", type="primary", key="ana_cod"):
+    bud4 = st.number_input("Budget ديالك دابا (DH/نهار) - باش نحسب ليك السكيلينغ", min_value=0.0, value=200.0, key="cod_bud4")
+    if st.button("🤖 حلل ليا COD + السكيلينغ", type="primary", key="ana_cod"):
         st.divider()
         profit_per_sale = cod_price - cod_cost
         if cod_conf > 0 and cod_deliv > 0:
@@ -409,6 +410,20 @@ with tab4:
                 st.write("**المشكل:** التوصيل كيتعطل بزاف. **الحل:** بدل شركة التوصيل. خاص يوصل في 1-2 أيام. **علاش؟** حيت كل نهار كيدوز، الكليان كيبرد و 50% ما غاديش يشدوه.")
         if cod_cpl <= 35 and cod_conf >= 60 and cod_deliv >= 65:
             st.success("✅ كلشي مزيان! CPL + CONF + DELIV كاملين في المستوى الطبيعي. كمل و سكيلي بـ 20% كل يومين.")
+        # ===== السكيلينغ - داخل COD نيشان =====
+        st.divider()
+        st.subheader("🚀 السكيلينغ - واش نسكيلي و شحال نزيد؟")
+        if net < 0:
+            st.error(f"🛑 ما تسكيليش! كتخسر {abs(net):.0f} DH في البياسة. صلح CONF ولا DELIV عاد سكيلي.")
+        else:
+            st.success(f"✅ تقدر تسكيلي! رابح {net:.0f} DH في البياسة.")
+            st.write(f"**اليوم:** {bud4:.0f} DH")
+            st.write(f"**بعد 2 أيام (+20%):** {bud4*1.2:.0f} DH")
+            st.write(f"**بعد 4 أيام (+20% عاود):** {bud4*1.44:.0f} DH")
+            st.write(f"**بعد 6 أيام (+20% عاود):** {bud4*1.73:.0f} DH")
+            st.write(f"**إلا CPL طلع فوق {cod_cpl*1.5:.0f} DH، حبس السكيلينغ و رجع لـ {bud4:.0f} DH")
+            if cod_cpl > 0:
+                st.write(f"**الربح المتوقع في النهار إلا سكيليتي:** {(bud4*1.44/cod_cpl)*(cod_conf/100)*(cod_deliv/100)*net:.0f} DH")
 
 # ================= TAB 5 =================
 with tab5:
@@ -784,7 +799,7 @@ with tab5:
             for s in solutions:
                 st.write(f"- {s}")
 
-# ================= TAB 6 - SPY =================
+# ================= TAB 6 - SPY - سيت واحد فقط =================
 with tab6:
     st.subheader("🕵️ Spy - عطيني lien ديال منافس، نعطيك واش كيبيع ولا لا")
     st.write("عطيه lien، هو كيحلل: واش جاي من إعلان Paid ولا لا، رقم الكامباين، و الترافيك التقريبي من SimilarWeb / Hypestat.")
@@ -822,143 +837,39 @@ with tab6:
         except Exception:
             pass
         return None
-    def spy_score(traffic, is_paid):
-        if not traffic:
-            return 1
-        return 3
-    mode = st.radio("شنو بغيتي تدير؟", ["🔍 حلل سيت واحد", "⚔️ قارن 3 سيتات"], horizontal=True, key="spy_mode")
-    if mode == "🔍 حلل سيت واحد":
-        spy_url = st.text_input("🔗 حط lien ديال المنافس هنا", placeholder="https://veloranatural.com/products/...", key="spy_single")
-        if st.button("🤖 حلل ليا هاد السيت", type="primary", key="btn_spy_single"):
-            info = spy_parse(spy_url)
-            if not info:
-                st.error("🚨 حط lien صحيح أ مولاي")
+    spy_url = st.text_input("🔗 حط lien ديال المنافس هنا", placeholder="https://veloranatural.com/products/...", key="spy_single")
+    if st.button("🤖 حلل ليا هاد السيت", type="primary", key="btn_spy_single"):
+        info = spy_parse(spy_url)
+        if not info:
+            st.error("🚨 حط lien صحيح أ مولاي")
+        else:
+            with st.spinner("⏳ كنقلب في SimilarWeb / Hypestat..."):
+                traffic = spy_traffic(info["domain"])
+            st.divider()
+            st.subheader("1. شنو عرفت من الـ Lien؟")
+            st.write(f"🌐 **الدومين:** {info['domain']}")
+            st.write(f"📦 **المنتج / الصفحة:** {info['product']}")
+            if info["is_paid"]:
+                st.write(f"💰 **خدام بـ Paid Ads** - الزائر جاي من إعلان مخلص")
+                st.write(f"📱 المصدر: **{info['source'] or 'Facebook'}** - الوسيلة: **{info['medium'] or 'paid'}**")
             else:
-                with st.spinner("⏳ كنقلب في SimilarWeb / Hypestat..."):
-                    traffic = spy_traffic(info["domain"])
-                st.divider()
-                st.subheader("1. شنو عرفت من الـ Lien؟")
-                st.write(f"🌐 **الدومين:** {info['domain']}")
-                st.write(f"📦 **المنتج / الصفحة:** {info['product']}")
-                if info["is_paid"]:
-                    st.write(f"💰 **خدام بـ Paid Ads** - الزائر جاي من إعلان مخلص")
-                    st.write(f"📱 المصدر: **{info['source'] or 'Facebook'}** - الوسيلة: **{info['medium'] or 'paid'}**")
-                else:
-                    st.write("🌱 **Organic** - ماشي جاي من إعلان")
-                if info["campaign"]:
-                    st.write(f"🎯 **رقم الكامباين:** {info['campaign']}")
-                if info["fbclid"]:
-                    st.write("👁️ فيه **fbclid** = كليك جاي من Facebook")
-                st.subheader("2. فين تقلب بيديك؟")
-                st.markdown(f"🔍 [SimilarWeb - {info['domain']}](https://www.similarweb.com/website/{info['domain']}/) | 📊 [Hypestat](https://hypestat.com/info/{info['domain']}) | 📢 [Meta Ad Library MA](https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=MA&q={info['domain']}) | 📈 [Google Trends](https://trends.google.com/trends/explore?geo=MA&q={info['domain']})")
-                st.subheader("3. الترافيك التقريبي")
-                if traffic:
-                    st.write(f"تقريبا **{traffic} زيارة في الشهر** (تقدير، ماشي رقم رسمي)")
-                    st.success("🟢 **سيت خدام** - عندو ترافيك، قلب الإعلانات ديالو")
-                    st.write(f"تقدير المبيعات: الترافيك × 1% = عدد الطلبات تقريبا.")
-                else:
-                    st.write("ما كاين داتا في SimilarWeb / Hypestat = **أقل من 5,000 زيارة في الشهر**")
-                    st.warning("🟡 **باقي في مرحلة Test - صغير** - باقي ما نجحش")
-                    st.write("تقدير المبيعات: ~1,000 زائر × 1-2% = **10 حتى 20 طلب في الشهر**")
-                st.subheader("4. الخلاصة ديالي ليك")
-                st.write("✅ إلا الإعلان خدام من 2-3 سيمانات و ما حبسش = راه كيبيع")
-                st.write("❌ إلا غير إعلان واحد و Followers قلال = راه باقي كيجرب")
-                st.write("💡 ما تقلدش سيت صغير، قلب على Winner اللي عندو ترافيك كبير و إعلانات بزاف")
-    else:
-        st.write("حط 3 ديال الـ liens، و هو كيقارنهم و كيقول ليك شكون هو Winner")
-        c1 = st.text_input("لين السيت 1", key="spy_c1")
-        c2 = st.text_input("لين السيت 2", key="spy_c2")
-        c3 = st.text_input("لين السيت 3", key="spy_c3")
-        if st.button("⚔️ قارنهم ليا دابا", type="primary", key="btn_spy_compare"):
-            urls = [x for x in [c1, c2, c3] if x.strip()]
-            if len(urls) < 2:
-                st.error("🚨 صيفط على الأقل 2 ديال liens باش نقارن")
+                st.write("🌱 **Organic** - ماشي جاي من إعلان")
+            if info["campaign"]:
+                st.write(f"🎯 **رقم الكامباين:** {info['campaign']}")
+            if info["fbclid"]:
+                st.write("👁️ فيه **fbclid** = كليك جاي من Facebook")
+            st.subheader("2. فين تقلب بيديك؟")
+            st.markdown(f"🔍 [SimilarWeb - {info['domain']}](https://www.similarweb.com/website/{info['domain']}/) | 📊 [Hypestat](https://hypestat.com/info/{info['domain']}) | 📢 [Meta Ad Library MA](https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=MA&q={info['domain']}) | 📈 [Google Trends](https://trends.google.com/trends/explore?geo=MA&q={info['domain']})")
+            st.subheader("3. الترافيك التقريبي")
+            if traffic:
+                st.write(f"تقريبا **{traffic} زيارة في الشهر** (تقدير، ماشي رقم رسمي)")
+                st.success("🟢 **سيت خدام** - عندو ترافيك، قلب الإعلانات ديالو")
+                st.write(f"تقدير المبيعات: الترافيك × 1% = عدد الطلبات تقريبا.")
             else:
-                datas = []
-                with st.spinner("⏳ كنقارن..."):
-                    for u_raw in urls:
-                        info = spy_parse(u_raw)
-                        if not info:
-                            continue
-                        traffic = spy_traffic(info["domain"])
-                        score = spy_score(traffic, info["is_paid"])
-                        datas.append({"info": info, "traffic": traffic, "score": score})
-                if not datas:
-                    st.error("🚨 liens ما خدامينش")
-                else:
-                    best_idx = 0
-                    best_score = -1
-                    for i, d in enumerate(datas):
-                        s = d["score"] + (1 if d["info"]["is_paid"] else 0)
-                        if s > best_score:
-                            best_score = s
-                            best_idx = i
-                    st.divider()
-                    st.subheader(f"⚔️ المقارنة بين {len(datas)} سيتات")
-                    rows = []
-                    for i, d in enumerate(datas):
-                        rows.append({
-                            "السيت": d["info"]["domain"],
-                            "المنتج": d["info"]["product"][:40],
-                            "الترافيك / شهر": d["traffic"] if d["traffic"] else "< 5,000",
-                            "إعلانات؟": "💰 Paid" if d["info"]["is_paid"] else "🌱 Organic",
-                            "النتيجة": "🏆 Winner" if i == best_idx else "—"
-                        })
-                    st.dataframe(pd.DataFrame(rows), use_container_width=True)
-                    st.success(f"🏆 **Winner هو: {datas[best_idx]['info']['domain']}**")
-                    if not datas[best_idx]["traffic"]:
-                        st.write("حتى Winner ما عندو ترافيك كبير - يعني هاد النيتش كامل باقي صغير، ولا المنافسين كاملين باقي كيجربو.")
-                    else:
-                        st.write(f"عندو ترافيك تقريبي **{datas[best_idx]['traffic']}** و خدام بـ Paid Ads.")
-                    st.write("**شنو تدير؟**")
-                    st.write("- خدم على المنتج ديال Winner، حيت هو اللي عندو أكبر ترافيك و إعلانات خدامين")
-                    st.write("- ما تقلدش السيت الصغير اللي ما عندو داتا")
-                    st.write("- شوف الإعلانات ديال Winner في Meta Ad Library و شوف شنو هو الـ Hook اللي خدام بيه")
-                    st.write("**روابط المقارنة:**")
-                    for d in datas:
-                        st.markdown(f"🔍 [SimilarWeb - {d['info']['domain']}](https://www.similarweb.com/website/{d['info']['domain']}/) | 📢 [Ads - {d['info']['domain']}](https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=MA&q={d['info']['domain']})")
-    st.divider()
-    st.subheader("🧮 حاسبة الربح - واش هاد المنتج ديال المنافس مربح؟")
-    pc1, pc2 = st.columns(2)
-    with pc1:
-        spy_sell = st.number_input("ثمن البيع (DH)", min_value=0.0, value=249.0, key="spy_sell")
-        spy_cost = st.number_input("ثمن السلعة + الشحن (DH)", min_value=0.0, value=90.0, key="spy_cost")
-    with pc2:
-        spy_ad = st.number_input("ثمن الإعلان للطلب الواحد (DH)", min_value=0.0, value=60.0, key="spy_ad")
-        spy_conf = st.number_input("نسبة التأكيد % (COD)", min_value=1.0, max_value=100.0, value=60.0, key="spy_conf")
-    ad_per_conf = spy_ad / (spy_conf / 100) if spy_conf > 0 else spy_ad
-    profit_spy = spy_sell - spy_cost - ad_per_conf
-    margin_spy = (profit_spy / spy_sell * 100) if spy_sell > 0 else 0
-    st.write(f"💰 **الربح في الطلب المؤكد: {profit_spy:.0f} DH** | 📊 نسبة الربح: **{margin_spy:.0f}%** | 📢 ثمن الإعلان الحقيقي للطلب المؤكد: **{ad_per_conf:.0f} DH**")
-    if profit_spy > 50:
-        st.success("✅ **مربح مزيان!** كمل فيه")
-    elif profit_spy > 0:
-        st.warning("🟡 **مربح شوية** - حاول تنقص ثمن الإعلان ولا تزيد الثمن")
-    else:
-        st.error("❌ **خاسر!** ما تخدمش على هاد المنتج بهاد الأثمنة")
-    st.write(f"إلا جبتي 100 طلب مؤكد في الشهر = ربح **{profit_spy*100:.0f} DH**")
-
-# ================= TAB 7 - JADID =================
-with tab7:
-    st.subheader("🚀 حاسبة السكيلينغ - شحال نزيد كل يومين؟")
-    cpl7 = st.number_input("CPL ديالك دابا (DH)", min_value=0.0, value=20.0, key="t7_cpl")
-    bud7 = st.number_input("Budget ديالك دابا (DH/نهار)", min_value=0.0, value=200.0, key="t7_bud")
-    conf7 = st.number_input("CONF %", min_value=0.0, max_value=100.0, value=60.0, key="t7_conf")
-    deliv7 = st.number_input("DELIV %", min_value=0.0, max_value=100.0, value=70.0, key="t7_deliv")
-    prix7 = st.number_input("ثمن البيع (DH)", min_value=0.0, value=249.0, key="t7_prix")
-    cout7 = st.number_input("ثمن السلعة + توصيل (DH)", min_value=0.0, value=90.0, key="t7_cout")
-    if st.button("🤖 حسب ليا السكيلينغ", type="primary", key="btn_t7"):
-        if cpl7 > 0 and conf7 > 0 and deliv7 > 0:
-            cost_deliv = cpl7 / (conf7/100) / (deliv7/100)
-            profit = prix7 - cout7 - cost_deliv
-            st.write(f"**الربح في بياسة موصلة:** {profit:.0f} DH | **باش تجيب بياسة موصلة كتخلص:** {cost_deliv:.0f} DH")
-            if profit < 0:
-                st.error(f"🛑 ما تسكيليش! كتخسر {abs(profit):.0f} DH في البياسة. صلح CONF ولا DELIV عاد سكيلي.")
-            else:
-                st.success(f"✅ تقدر تسكيلي! رابح {profit:.0f} DH في البياسة.")
-                st.write(f"**اليوم:** {bud7:.0f} DH")
-                st.write(f"**بعد 2 أيام (+20%):** {bud7*1.2:.0f} DH")
-                st.write(f"**بعد 4 أيام (+20% عاود):** {bud7*1.44:.0f} DH")
-                st.write(f"**بعد 6 أيام (+20% عاود):** {bud7*1.73:.0f} DH")
-                st.write(f"**إلا CPL طلع فوق {cpl7*1.5:.0f} DH، حبس السكيلينغ و رجع لـ {bud7:.0f} DH**")
-                st.write(f"**الربح المتوقع في النهار إلا سكيليتي:** {(bud7*1.44/cpl7)*(conf7/100)*(deliv7/100)*profit:.0f} DH")
+                st.write("ما كاين داتا في SimilarWeb / Hypestat = **أقل من 5,000 زيارة في الشهر**")
+                st.warning("🟡 **باقي في مرحلة Test - صغير** - باقي ما نجحش")
+                st.write("تقدير المبيعات: ~1,000 زائر × 1-2% = **10 حتى 20 طلب في الشهر**")
+            st.subheader("4. الخلاصة ديالي ليك")
+            st.write("✅ إلا الإعلان خدام من 2-3 سيمانات و ما حبسش = راه كيبيع")
+            st.write("❌ إلا غير إعلان واحد و Followers قلال = راه باقي كيجرب")
+            st.write("💡 ما تقلدش سيت صغير، قلب على Winner اللي عندو ترافيك كبير و إعلانات بزاف")
